@@ -1,1 +1,1 @@
-# vn3-easy-genelator
+# vn3-easy-generator
