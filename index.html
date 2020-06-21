@@ -11,58 +11,202 @@
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
     <title>VN3License Easy Generator</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
+    
+    <script src="lc_switch.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="lc_switch.css">
+    <style type="text/css">
+        /* *{
+            outline:solid red 2px;
+        } */
+        #header {
+            margin:  20px auto;
+            width:900px;
+            outline:solid 1px;
+        }
+        #maincontents{
+             margin:  20px auto;
+             width:900px;
+             outline:solid 1px;
+        }
+        .term-text{
+            display: inline-block;
+            width:700px;
+            margin-left : 10px;
+            font-weight: bold;
+        }
+        #termsimage{
+            text-align:center;
+            z-index: 1000;
+            background-color:white;
+            outline:solid 2px;
+            position: -webkit-sticky;
+            position: sticky;
+            bottom: 0px;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>VN3License Easy Generator</h1>
+    <div id="header">
+        <h1>VN3License Easy Generator v1.0.0</h1>
+    </div>
+    <div id="maincontents">  
+    </div>
+    <div id="termsimage">
+        <canvas id="termcanvas" width="600px" height="400px">
 
-    <form>
-        <div class="form-group">
-            <label for="exampleInputEmail1">Email address</label>
-            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
-        </div>
-        <div class="form-group">
-            <label for="exampleInputPassword1">Password</label>
-            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-        </div>
-        <div class="form-group">
-            <label for="exampleInputFile">File input</label>
-            <input type="file" id="exampleInputFile">
-            <p class="help-block">Example block-level help text here.</p>
-        </div>
-        <div class="form-group row">
-            <div class="col-sm-2">
-                <%= f.label :sex, '性別', {class: 'form-label'} %>
-            </div>
-            <div class="col-sm-10 btn-group" data-toggle="buttons">
-                <label class="btn btn-outline-secondary active" style="width:50%">
-                    <%= f.radio_button :sex, 0, {checked: true} %> 男性
-                </label>
-                <label class="btn btn-outline-secondary" style="width:50%">
-                    <%= f.radio_button :sex, 1, {} %> 女性
-                </label>
-            </div>
-        </div>
-        <div class="checkbox">
-            <label>
-                <input type="checkbox"> Check me out
-            </label>
-        </div>
-        <button type="submit" class="btn btn-default">Submit</button>
-    </form>
+        </canvas>
+    </div>
+
+<script type="text/javascript">
+    
+
+        //termのデータ　["UID","条項のテキスト","ONのときの表示","OFFのときの表示","画像ファイル名"]
+        var terms = [
+            ["A","個人による利用","許可","不許可","a.png"],
+            ["B","法人による利用","許可","不許可","b.png"],
+            ["C","自ら利用する目的で、ソーシャルコミュニケーションプラットフォーム（VRChat、Virtual Cast、cluster等を含みます）へアップロードすること","許可","不許可","c.png"],
+            ["D","自ら利用する目的で、オンラインゲームプラットフォームへアップロードすること", "許可", "不許可","d.png"],
+            ["E","そのプラットフォームにおいて第三者に利用させる目的で、ソーシャルコミュニケーションプラットフォームやオンラインゲームプラットフォームへアップロードすること", "許可", "不許可","e.png"],
+            ["F","性的表現への利用", "許可", "不許可","f.png"],
+            ["G","暴力的表現への利用", "許可", "不許可","g.png"],
+            ["H","政治活動への利用および、宗教活動への利用", "許可", "不許可","h.png"],
+            ["I","調整、外観を損なわない範囲でのポリゴン数削減、およびファイル形式を変換すること", "許可", "不許可","i.png"],
+            ["J","本データまたはパーツを改変することおよび、改変したデータを本データと同じ条件で利用すること（本データまたはパーツを主たる素体として、改変を行う場合を含みます）", "許可", "不許可","j.png"],
+            ["K","他のデータを改変する目的で、本データまたはパーツを用いること（本データまたはパーツを従たる素体として、他のモデルを主たる素体として改変を行う場合を含みます）", "許可", "不許可","k.png"],
+            ["L","調整または改変を第三者に委託して行うことおよび、委託のために本データを貸与すること", "許可", "不許可","l.png"],
+            ["M","未改変状態での再配布", "許可", "不許可","m.png"],
+            ["N","改変した本データを配布すること", "許可", "不許可","n.png"],
+            ["O","映像作品、配信（Youtubeを含みます）、放送への利用", "許可", "不許可","o.png"],
+            ["P","出版物および電子出版物への利用", "許可", "不許可","p.png"],
+            ["Q","有体物（グッズ）への利用", "許可", "不許可","q.png"],
+            ["R","製品開発等のためにソフトウェア（ゲームを含みます）へ組み込み、容易に取り出せない状態にして配布すること", "許可", "不許可","r.png"],
+            ["S","本データのメッシュやウェイトをコピーして、本データのための衣装データ等を作成すること（ただし改変が著しく少ない場合を除きます）", "許可", "不許可","s.png"],
+            ["T","本データのメッシュやウェイトを利用せずに、本データの規格に準拠した新たな衣装データ等やテクスチャデータ等を作成すること", "許可", "不許可","t.png"],
+            ["U","本データをそのまま利用しないで、本データをモチーフにした二次的著作物（いわゆる二次創作）を作成すること", "許可", "不許可","u.png"],
+            ["V","利用時のクレジット表記","必要","不要","v.png"],
+            ["W","権利義務の譲渡等", "許可", "不許可","w.png"],
+            ["X","特記事項","あり","なし","x.png"]
+        ];
+        var termTemplate = '<p class="term">\
+            <div class="lcs_wrap"><input type="checkbox" name="check-1" value="{term_index}" class="lcs_check" autocomplete="off">\
+                <div class="lcs_switch lcs_checkbox_switch lcs_off">\
+                    <div class="lcs_cursor"></div>\
+                    <div class="lcs_label lcs_label_on">{term_on}</div>\
+                    <div class="lcs_label lcs_label_off">{term_off}</div>\
+                </div>\
+            </div>\
+                <div class="term-text">{term_text}</div>\
+        </p>';
+
+        
 
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-        crossorigin="anonymous"></script>
+    //termDataListの初期化（ON OFFの情報を持つ）
+    var termDataList = {};
+    for (var i=0;i<terms.length;i++){
+        termDataList[terms[i][0]] = false;
+    }
+
+    var icons = {};
+    for (var i=0;i<terms.length;i++){
+        var uid = terms[i][0];
+        icons[uid] = new Image();
+        var iconname = terms[i][4]; 
+        icons[uid].src = "icons/" + iconname;
+    }
+
+ 
+    function generateImage(){
+        var canvas = document.getElementById('termcanvas');
+        var ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = "rgb(0,0,0)";
+        ctx.fillRect(0, 0, 600,400);
+
+        var pasteX = 0;
+        var pasteY = 0;
+        var size = 85;
+        Object.keys(termDataList).forEach(function(key){
+            if(termDataList[key]){
+                ctx.drawImage(icons[key], pasteX, pasteY,size,size);
+                pasteX += size;
+                if(pasteX > 600-size){
+                    pasteX = 0;
+                    pasteY += size;
+                }
+            }
+        });
+    }
+
+    $(document).ready(function (e) {
+        $('input.lcs_check').lc_switch();
+
+
+
+
+        for(let i = 0;i<terms.length;i++) {
+
+            termHTML = termTemplate;
+            
+            termIndex = terms[i][0];
+            termText = terms[i][1];
+            termOnText = terms[i][2];
+            termOffText = terms[i][3];
+
+            termHTML = termHTML.replace("{term_index}",termIndex);
+            termHTML = termHTML.replace("{term_text}",termText);
+            termHTML = termHTML.replace("{term_on}",termOnText);
+            termHTML = termHTML.replace("{term_off}",termOffText);
+
+            $("#maincontents").append(termHTML);
+        }
+
+
+
+        // triggered each time a field changes status
+        $(document).on('lcs-statuschange', '.lcs_check', function () {
+            // var status = ($(this).is(':checked')) ? 'checked' : 'unchecked',
+            //     subj = ($(this).attr('type') == 'radio') ? 'radio #' : 'checkbox #',
+            //     num = $(this).val();
+            // console.log(subj + "," + num + "," + status);
+            // $('#third_div ul').prepend('<li><em>[lcs-statuschange]</em>' + subj + num + ' changed status: ' + status + '</li>');
+
+            //termの許可不許可の更新をtermDataListに反映する
+            termDataList[$(this).val()] = $(this).is(":checked");
+
+            generateImage();
+
+        });
+
+
+        // // triggered each time a field is checked
+        // $(document).on('lcs-on', '.lcs_check', function () {
+        //     var subj = ($(this).attr('type') == 'radio') ? 'radio #' : 'checkbox #',
+        //         num = $(this).val();
+
+        //     $('#third_div ul').prepend('<li><em>[lcs-on]</em>' + subj + num + ' is checked</li>');
+        // });
+
+
+        // // triggered each time a is unchecked
+        // $(document).on('lcs-off', '.lcs_check', function () {
+        //     var subj = ($(this).attr('type') == 'radio') ? 'radio #' : 'checkbox #',
+        //         num = $(this).val();
+
+        //     $('#third_div ul').prepend('<li><em>[lcs-off]</em>' + subj + num + ' is unchecked</li>');
+        // });
+    });
+
+
+
+    // clean events log
+    $('#third_div small').click(function () {
+        $('#third_div ul').empty();
+    });
+</script>
+
 </body>
 
 </html>
