@@ -35,6 +35,14 @@
             margin-left : 10px;
             font-weight: bold;
         }
+        .term-image{
+            display: inline-block;
+            vertical-align: top;
+        }
+        .term-image>img{
+            width:28px;
+            height:28px;
+        }
         #termsimage{
             text-align:center;
             z-index: 1000;
@@ -49,7 +57,7 @@
 
 <body>
     <div id="header">
-        <h1>VN3License Easy Generator v1.0.0</h1>
+        <h1>VN3License Easy Generator</h1>
     </div>
     <div id="maincontents">  
     </div>
@@ -97,8 +105,12 @@
                     <div class="lcs_label lcs_label_off">{term_off}</div>\
                 </div>\
             </div>\
+                <div class="term-image"><img src="{term_imageurl}"></div>\
                 <div class="term-text">{term_text}</div>\
         </p>';
+
+        const license_version = "0.10";
+        const generator_version = "1.0.0";
 
         
 
@@ -109,6 +121,7 @@
         termDataList[terms[i][0]] = false;
     }
 
+    //アイコンは事前にロードしておく。drawImageの直前でロードだと描画されないことがある
     var icons = {};
     for (var i=0;i<terms.length;i++){
         var uid = terms[i][0];
@@ -116,28 +129,68 @@
         var iconname = terms[i][4]; 
         icons[uid].src = "icons/" + iconname;
     }
+    var logo = new Image();
+    logo.src = "logo.png";
 
- 
     function generateImage(){
+
+        var iconsize = 85;
+        var col = 5;
+        var row = 1;
+        const margin = 18;
+        const logoheight = 96;
+        const logowidth = 240;
+        const versionheight = 15;
+
+
+        var onNum = 0;
+        Object.keys(termDataList).forEach(function(key){
+            if(termDataList[key])onNum++;
+        });
+        if (onNum == 0){
+            row = 1;
+        }else{
+            row = Math.floor((onNum - 1)/ col)+1;
+        }
+        console.log("onNum="+ onNum + " " + col + " " + row);
         var canvas = document.getElementById('termcanvas');
+
+        var imagewidth = Math.max(iconsize * col + 2 * margin, logowidth + 170);
+        var imageheight = logoheight + iconsize * row + margin;
+        
+        canvas.width = imagewidth;
+        canvas.height = imageheight;
+
         var ctx = canvas.getContext('2d');
 
+        //background描画
         ctx.fillStyle = "rgb(0,0,0)";
-        ctx.fillRect(0, 0, 600,400);
+        ctx.fillRect(0, 0, imagewidth,imageheight);
 
-        var pasteX = 0;
-        var pasteY = 0;
-        var size = 85;
+        //logo描画
+        ctx.drawImage(logo,0,0);
+
+        //icon描画
+        var pasteX = margin;
+        var pasteY = logoheight;
         Object.keys(termDataList).forEach(function(key){
             if(termDataList[key]){
-                ctx.drawImage(icons[key], pasteX, pasteY,size,size);
-                pasteX += size;
-                if(pasteX > 600-size){
-                    pasteX = 0;
-                    pasteY += size;
+                ctx.drawImage(icons[key], pasteX, pasteY,iconsize,iconsize);
+                pasteX += iconsize;
+                if(pasteX > imagewidth-iconsize){
+                    pasteX = margin;
+                    pasteY += iconsize;
                 }
             }
         });
+
+        //version描画
+        ctx.font = versionheight + "px Arial";
+        ctx.fillStyle = "rgb(255,255,255)";
+        ctx.fillText("License version:" + license_version, logowidth+margin,versionheight);
+    }
+    function generateText(){
+
     }
 
     $(document).ready(function (e) {
@@ -145,26 +198,29 @@
 
 
 
-
+        //ONOFF条項テキストのDOMを作成してHTMLに追加する
         for(let i = 0;i<terms.length;i++) {
 
-            termHTML = termTemplate;
+            var termHTML = termTemplate;
             
-            termIndex = terms[i][0];
-            termText = terms[i][1];
-            termOnText = terms[i][2];
-            termOffText = terms[i][3];
+            var termIndex = terms[i][0];
+            var termText = termIndex + ". " +  terms[i][1];
+            var termOnText = terms[i][2];
+            var termOffText = terms[i][3];
+            var termImageURL = "icons/" + terms[i][4];
 
             termHTML = termHTML.replace("{term_index}",termIndex);
             termHTML = termHTML.replace("{term_text}",termText);
             termHTML = termHTML.replace("{term_on}",termOnText);
             termHTML = termHTML.replace("{term_off}",termOffText);
+            termHTML = termHTML.replace("{term_imageurl}",termImageURL);
 
             $("#maincontents").append(termHTML);
         }
 
-
-
+        logo.onload = function(){
+            generateImage();
+        }
         // triggered each time a field changes status
         $(document).on('lcs-statuschange', '.lcs_check', function () {
             // var status = ($(this).is(':checked')) ? 'checked' : 'unchecked',
@@ -173,13 +229,18 @@
             // console.log(subj + "," + num + "," + status);
             // $('#third_div ul').prepend('<li><em>[lcs-statuschange]</em>' + subj + num + ' changed status: ' + status + '</li>');
 
-            //termの許可不許可の更新をtermDataListに反映する
+            //termのONOFFの更新をtermDataListに反映する
             termDataList[$(this).val()] = $(this).is(":checked");
 
             generateImage();
-
+            generateText();
         });
 
+        $(".term-image > img").hover(function(){
+            $(this).width("50px").height("50px");
+        },function(){
+            $(this).width("25px").height("25px");
+        });
 
         // // triggered each time a field is checked
         // $(document).on('lcs-on', '.lcs_check', function () {
@@ -200,11 +261,6 @@
     });
 
 
-
-    // clean events log
-    $('#third_div small').click(function () {
-        $('#third_div ul').empty();
-    });
 </script>
 
 </body>
