@@ -350,7 +350,8 @@
         console.log("onNum="+ onNum + " " + col + " " + row);
         var canvas = document.getElementById('downloadcanvas');
 
-        var imagewidth = Math.max(iconsize * col + 2 * margin, logowidth + 170);
+        //200はversion描画の横幅
+        var imagewidth = Math.max(iconsize * col + 2 * margin, logowidth + 200);
         var imageheight = logoheight + iconsize * row + margin;
         
         canvas.width = imagewidth;
