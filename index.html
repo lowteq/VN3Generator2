@@ -60,6 +60,7 @@
         }
         #termstextarea{
             text-align: left;
+            margin-left: 20px;
         }
         .term-text{
             display: inline-block;
@@ -103,9 +104,10 @@
         }
 
         .settingtext{
-            width:150px;
+            width:180px;
             text-align:right;
             display:inline-block;
+            margin-right: 10px;
         }
         #menu{
             margin:  0px auto;
@@ -131,7 +133,22 @@
             border-bottom: 5px solid #0aa116;
         }
 
+        #textsettingpanel{
+            padding : 20px;
+            margin: 20px auto;
+            width:700px;
+            outline:solid 1px;
 
+        }
+        .dtp-value{
+            vertical-align:top;
+            width:400px;
+            display: inline-block;
+        }
+        #durationtextarea{
+            text-align:left;
+            font-size: 0.8em;
+        }
     </style>
 </head>
 
@@ -140,20 +157,20 @@
         <h1>VN3License Easy Generator</h1>
     </div>
     <div class="content" id="menu">
-        <div id="settingbutton"><span style="vertical-align:bottom;font-weight: bold;">生成パネル設定 </span><img src="settings.png" width="40px" height="40px"></div>
+        <div id="settingbutton"><span style="vertical-align:bottom;font-weight: bold;">画像パネル設定 </span><img src="settings.png" width="40px" height="40px"></div>
         <div id="setting">
             <p>
-                <input type="checkbox" id="setting-pin" checked="checked">ピン止め
+                <input type="checkbox" id="setting-pin" checked="checked"><label for="setting-pin" style="user-select: none;">ピン止め</label>
             </p>
             <hr>
             <p>
-            <div class="settingtext">アイコンサイズ</div><input id="iconsizeslider" type="range" value="85" min="50" max="160"
+            <div class="settingtext">アイコンサイズ</div><input id="iconsizeslider" type="range" value="85" min="50" max="200"
                 step="1">
             <span id="iconsize">85</span>
             </p>
             <p>
-            <div class="settingtext">カラム数</div><input id="columnslider" type="range" value="5" min="2" max="10" step="1">
-            <span id="columnnum">5</span>
+            <div class="settingtext">カラム数</div><input id="columnslider" type="range" value="6" min="2" max="10" step="1">
+            <span id="columnnum">6</span>
             </p>
         </div>
     </div>
@@ -162,7 +179,7 @@
             <a href="https://www.vn3.org/">VN3License</a>はVN3ライセンスチーム 2020によって作られたバーチャルネイティブの生活やバーチャル文化、そしてVRの発展に寄与することを目的とした、汎用的なデータ配布用の利用規約のテンプレートです。
         </p>
         <p>
-            このページではより簡単に許諾の画像とテキストファイルを生成・ダウンロードすることができます。
+            このページではVN3Licenseに準拠した利用許諾画像と規約テキストファイルをより簡単に生成・ダウンロードすることができます。
         </p>
         <p>
             このEasy Generatorについてのお問い合わせは<a href="https://twitter.com/lowteq_vr">@lowteq_vr</a>までお願いします。
@@ -170,22 +187,58 @@
     </div>
     <div class="content" id="maincontents">  
     </div>
+    <hr style="width:900px">
     <div class="content" id="downloadtextpanel">
-        利用規約タイトル<input type="text" id="dtp-title">
-        権利者名<input type="text" id="dtp-author_name">
+        <div id="textsettingpanel">
+            <b>ライセンステキスト設定</b>
+            <p>
+                <div class="settingtext">利用規約タイトル</div><input type="text" class="dtp-value" id="dtp-title">
+            </p>
+            <p>
+                <div class="settingtext">権利者名</div><input type="text" class="dtp-value" id="dtp-author_name">
+            </p>
+            <p>
+                <div class="settingtext">許諾対象データ名</div><input type="text" class="dtp-value" id="dtp-data_name">
+            </p>
+            <p>
+                <div class="settingtext">特記事項</div><input type="text" class="dtp-value" id="dtp-special_notes">
+            </p>
+            <p>
+                <div class="settingtext">権利者問い合わせ先</div><input type="text" class="dtp-value" id="dtp-author_info">
+            </p>
+            <p>
+                <div class="settingtext">クレジット表記</div><input type="text" class="dtp-value" id="dtp-credit">
+            </p>
+            <p>
+                <div class="settingtext">推奨するハッシュタグ</div><input type="text" class="dtp-value" id="dtp-hashtag">
+            </p>
+            <p>
+                <div class="settingtext">許諾期間および<br>許諾の変更等</div>
+                <div class="dtp-value">
+                    <select id="dtp-duration" style="width:400px">
+                        <option value="1">許諾期間はユーザーとなった日から開始され、権利者によって利用の終了が指示されるまでとします。<br>また、権利者から別途指示がある場合、当該指示は他の定めに優先するものとし、ユーザーはこれに従うか、または利用を終了しなければなりません。指示には本利用規約に関する条件の、追加、変更もしくは削除、または利用の中止が含まれます。権利者が、権利者の管理するウェブサイトやブログ等に指示を掲示し、合理的な方法で周知した場合も同様とします。従って、ユーザーは、合理的な範囲内で定期的に権利者の発信する情報を確認しなければなりません。</option>
+                        <option value="2">許諾期間はユーザーとなった日から開始され、期間の定めはありません。権利者が、権利者の管理するウェブサイトやブログ等に本利用規約に関する条件の変更（追加、変更または削除を含みますがこれに限られません）を掲示し合理的な方法で周知した場合において、その効力発生日以降にユーザーが本データを利用した場合は、当該変更に同意したものとみなします。従って、ユーザーは、合理的な範囲内で定期的に権利者の発信する情報を確認しなければなりません。</option>
+                        <option value="3">許諾期間はユーザーとなった日から開始され、期間の定めはありません。本許諾または本利用規約は本データのバージョンアップには適用されません。バージョンアップ後のデータには、新たな利用規約が適用されます。</option>
+                    </select>
+                    <div class="dtp-value" id="durationtextarea"></div>
+                </div>
 
-        <textarea id="termstextarea" cols="120" rows="15">Hello, World!
-        こんにちは、みなさん！
-        </textarea>
+            </p>
+            <p>
+                <div class="settingtext">規約バージョン</div><input type="text" class="dtp-value" id="dtp-version">
+            </p>
+        </div>
+        <textarea id="termstextarea" cols="120" rows="15" wrap="off" readonly></textarea>
+        <p style="text-align: center">
+            <div class="btn btn--green btn--cubic" id="textdownload">テキストをダウンロード</div>
+        </p>
     </div>
     <div id="termsimagepanel">
-
         <p>
         <canvas id="downloadcanvas" width="600px" height="400px">
         </canvas>
         </p>
         <p style="text-align: center">
-        <!-- <input type="button" id="imagedownload" value="生成画像をダウンロード"> -->
             <div class="btn btn--green btn--cubic" id="imagedownload">画像をダウンロード</div>
         </p>
     </div>
@@ -319,15 +372,63 @@
     function generateText(){
         var licenseText = licenseTemplate;
 
-        
+        var title = $("#dtp-title").val();
+        var author_name = $("#dtp-author_name").val();
+        var data_name = $("#dtp-data_name").val();
+        var genterms = generateTerms();
+        var special_notes = $("#dtp-special_notes").val();
+        var author_info = $("#dtp-author_info").val();
+        var credit = $("#dtp-credit").val();
+        var hashtag = $("#dtp-hashtag").val();
+        var duration = $("#dtp-durationtextarea").val();
+        var version = $("#dtp-version").val();
+
+
+        licenseText = replaceAll(licenseText,"{title}",title);
+        licenseText = replaceAll(licenseText,"{author_name}",author_name);
+        licenseText = replaceAll(licenseText,"{data_name}",data_name);
+        licenseText = replaceAll(licenseText,"{terms}",genterms);
+        licenseText = replaceAll(licenseText,"{special_notes}",special_notes);
+        licenseText = replaceAll(licenseText,"{author_info}",author_info);
+        licenseText = replaceAll(licenseText,"{credit}",credit);
+        licenseText = replaceAll(licenseText,"{hashtag}",hashtag);
+        licenseText = replaceAll(licenseText,"{duration}",duration);
+        licenseText = replaceAll(licenseText,"{version}",version);
+
+        $("#termstextarea").val(licenseText);
 
     }
 
+    function generateTerms() {
+        
+        var textterms = "";
+
+        for(var i = 0; i < terms.length; i++) {
+            
+            var indexChar = terms[i][0];
+            var termtext = terms[i][1];
+            var selected = termDataList[indexChar]? terms[i][2] : terms[i][3];
+
+            var addterm = "    " + indexChar + "." + termtext + " \n        " + selected + "\n";
+            textterms += addterm;
+
+        }
+
+        return textterms;
+    }
+
+    function replaceAll(str, beforeStr, afterStr){
+        var reg = new RegExp(beforeStr, "g");
+        return str.replace(reg, afterStr);
+    }
     $(document).ready(function (e) {
         $('input.lcs_check').lc_switch();
+        
+        $("#durationtextarea").text($("option:selected", this).text());
 
-        $.get("licensetemplate.txt",function(data){
+        $.get("https://lowteq.github.io/vn3-easy-generator/licensetemplate.txt",function(data){
             licenseTemplate = data;
+            generateText();
         });
 
         //ONOFF条項テキストのDOMを作成してHTMLに追加する
@@ -367,6 +468,9 @@
             generateImage();
             generateText();
         });
+        $(".dtp-value").keyup(function(){
+            generateText();
+        });
 
         $(".term-image > img").hover(function(){
             $(this).width("50px").height("50px");
@@ -401,7 +505,8 @@
             }
         });
         $("#imagedownload").on("click",function(){
-            console.log("download");
+            console.log("image download");
+            
             var canvas = document.getElementById("downloadcanvas");
             var link = document.createElement("a");
 
@@ -409,6 +514,23 @@
             link.download = "vn3license_generateimage.png";
             link.click();
             
+        });
+        $("#textdownload").on("click",function(){
+            console.log("text download");
+            
+            var licenseText = $("#termstextarea").val();
+            var blob = new Blob([licenseText]);
+            var link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "license.txt";
+            link.click();
+
+        });
+
+        $("#dtp-duration").change(function(){
+            $("#durationtextarea").text($("option:selected",this).text());
+            generateText();
+
         });
 
         // // triggered each time a field is checked
