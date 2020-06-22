@@ -19,6 +19,17 @@
         /* *{
             outline:solid red 2px;
         } */
+        a{
+            color: rgb(60,60,60);
+            border-bottom: 1px solid;   
+        }
+        a:hover{
+            color: rgb(100,100,100)
+        }
+        .content{
+            margin: 20px auto;
+            width:900px;
+        }
         #header {
             padding : 20px;
             margin:  20px auto;
@@ -27,11 +38,28 @@
             border-radius: 3px;
             box-shadow: 0 0px 20px rgba(0,0,0,0.2);
         }
+        #overview{
+            padding : 20px;
+            margin: 20px auto;
+            width:900px;
+            outline:solid 1px;
+            font-size:90%;
+        
+        }
         #maincontents{
             padding : 20px;
             margin: 20px auto;
             width:900px;
             outline:solid 1px;
+        }
+        #downloadtextpanel{
+            width:900px;
+            margin: 20px auto;
+            position: relative;
+            text-align:center;
+        }
+        #termstextarea{
+            text-align: left;
         }
         .term-text{
             display: inline-block;
@@ -47,13 +75,14 @@
             width:28px;
             height:28px;
         }
-        #termsimage{
-            padding : 30px;
+        #termsimagepanel{
+            padding : 0px 10px 5px;
             z-index: 1000;
             background-color:white;
             outline:solid 2px;
             position: sticky;
             bottom: 0px;
+            width:100%;
         }
         #setting{
             padding : 20px;
@@ -66,7 +95,7 @@
 
             float: left bottom;;
         }
-        #termcanvas{
+        #downloadcanvas{
             margin: auto;
             padding : 10px;
             display: block;
@@ -86,16 +115,32 @@
             text-align: right;
             cursor: pointer;
         }
+        .btn--green {
+            margin: auto;
+            display:block;
+            width:230px;
+            color: #000;
+            background-color: #36f53f;
+            border-bottom: 5px solid #12a10d;
+        }
+
+        .btn--green:hover {
+
+            color: #000;
+            background: #86ff56;
+            border-bottom: 5px solid #0aa116;
+        }
+
 
     </style>
 </head>
 
 <body>
-    <div id="header">
+    <div class="content" id="header">
         <h1>VN3License Easy Generator</h1>
     </div>
-    <div id="menu">
-        <div id="settingbutton"><span style="vertical-align:bottom;font-weight: bold;">生成画像設定 </span><img src="settings.png" width="40px" height="40px"></div>
+    <div class="content" id="menu">
+        <div id="settingbutton"><span style="vertical-align:bottom;font-weight: bold;">生成パネル設定 </span><img src="settings.png" width="40px" height="40px"></div>
         <div id="setting">
             <p>
                 <input type="checkbox" id="setting-pin" checked="checked">ピン止め
@@ -112,17 +157,36 @@
             </p>
         </div>
     </div>
-    <div id="maincontents">  
+    <div class="content" id="overview">
+        <p>
+            <a href="https://www.vn3.org/">VN3License</a>はVN3ライセンスチーム 2020によって作られたバーチャルネイティブの生活やバーチャル文化、そしてVRの発展に寄与することを目的とした、汎用的なデータ配布用の利用規約のテンプレートです。
+        </p>
+        <p>
+            このページではより簡単に許諾の画像とテキストファイルを生成・ダウンロードすることができます。
+        </p>
+        <p>
+            このEasy Generatorについてのお問い合わせは<a href="https://twitter.com/lowteq_vr">@lowteq_vr</a>までお願いします。
+        </p>
     </div>
+    <div class="content" id="maincontents">  
+    </div>
+    <div class="content" id="downloadtextpanel">
+        利用規約タイトル<input type="text" id="dtp-title">
+        権利者名<input type="text" id="dtp-author_name">
 
-    <div id="termsimage">
+        <textarea id="termstextarea" cols="120" rows="15">Hello, World!
+        こんにちは、みなさん！
+        </textarea>
+    </div>
+    <div id="termsimagepanel">
 
         <p>
-        <canvas id="termcanvas" width="600px" height="400px">
+        <canvas id="downloadcanvas" width="600px" height="400px">
         </canvas>
         </p>
         <p style="text-align: center">
-        <input type="button" id="imagedownload" value="生成画像をダウンロード">
+        <!-- <input type="button" id="imagedownload" value="生成画像をダウンロード"> -->
+            <div class="btn btn--green btn--cubic" id="imagedownload">画像をダウンロード</div>
         </p>
     </div>
 
@@ -168,10 +232,12 @@
                 <div class="term-text">{term_text}</div>\
         </p>';
 
+
+
         const license_version = "0.10";
         const generator_version = "1.0.0";
 
-        
+        var licenseTemplate = "";
 
 
     //termDataListの初期化（ON OFFの情報を持つ）
@@ -214,7 +280,7 @@
             row = Math.floor((onNum - 1)/ col)+1;
         }
         console.log("onNum="+ onNum + " " + col + " " + row);
-        var canvas = document.getElementById('termcanvas');
+        var canvas = document.getElementById('downloadcanvas');
 
         var imagewidth = Math.max(iconsize * col + 2 * margin, logowidth + 170);
         var imageheight = logoheight + iconsize * row + margin;
@@ -251,13 +317,18 @@
         ctx.fillText("License version:" + license_version, logowidth+margin,versionheight);
     }
     function generateText(){
+        var licenseText = licenseTemplate;
+
+        
 
     }
 
     $(document).ready(function (e) {
         $('input.lcs_check').lc_switch();
 
-
+        $.get("licensetemplate.txt",function(data){
+            licenseTemplate = data;
+        });
 
         //ONOFF条項テキストのDOMを作成してHTMLに追加する
         for(let i = 0;i<terms.length;i++) {
@@ -314,9 +385,9 @@
         $("#setting-pin").change(function(){
             var checked = $(this).is(":checked");
             if(checked){
-                $("#termsimage").css("position", "sticky");
+                $("#termsimagepanel").css("position", "sticky");
             }else{
-                $("#termsimage").css("position","relative");
+                $("#termsimagepanel").css("position","relative");
             }
         });
         $("#setting").hide();
@@ -329,9 +400,9 @@
                 $('#setting').hide();
             }
         });
-        $("input#imagedownload").on("click",function(){
+        $("#imagedownload").on("click",function(){
             console.log("download");
-            var canvas = document.getElementById("termcanvas");
+            var canvas = document.getElementById("downloadcanvas");
             var link = document.createElement("a");
 
             link.href = canvas.toDataURL("image/png");
