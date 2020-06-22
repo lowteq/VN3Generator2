@@ -20,18 +20,22 @@
             outline:solid red 2px;
         } */
         #header {
+            padding : 20px;
             margin:  20px auto;
+            width:900px;
+            /* outline:solid 1px; */
+            border-radius: 3px;
+            box-shadow: 0 0px 20px rgba(0,0,0,0.2);
+        }
+        #maincontents{
+            padding : 20px;
+            margin: 20px auto;
             width:900px;
             outline:solid 1px;
         }
-        #maincontents{
-             margin:  20px auto;
-             width:900px;
-             outline:solid 1px;
-        }
         .term-text{
             display: inline-block;
-            width:700px;
+            width:650px;
             margin-left : 10px;
             font-weight: bold;
         }
@@ -44,14 +48,45 @@
             height:28px;
         }
         #termsimage{
-            text-align:center;
+            padding : 30px;
             z-index: 1000;
             background-color:white;
             outline:solid 2px;
-            position: -webkit-sticky;
             position: sticky;
             bottom: 0px;
         }
+        #setting{
+            padding : 20px;
+            width:400px;
+            outline:solid 1px;
+            background-color: rgba(255,255,255,0.9);
+            z-index: 1001;
+            position: absolute;
+            margin-left: 500px;
+
+            float: left bottom;;
+        }
+        #termcanvas{
+            margin: auto;
+            padding : 10px;
+            display: block;
+            
+        }
+
+        .settingtext{
+            width:150px;
+            text-align:right;
+            display:inline-block;
+        }
+        #menu{
+            margin:  0px auto;
+            width:900px;
+        }
+        #settingbutton{
+            text-align: right;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 
@@ -59,12 +94,36 @@
     <div id="header">
         <h1>VN3License Easy Generator</h1>
     </div>
+    <div id="menu">
+        <div id="settingbutton"><span style="vertical-align:bottom;font-weight: bold;">生成画像設定 </span><img src="settings.png" width="40px" height="40px"></div>
+        <div id="setting">
+            <p>
+                <input type="checkbox" id="setting-pin" checked="checked">ピン止め
+            </p>
+            <hr>
+            <p>
+            <div class="settingtext">アイコンサイズ</div><input id="iconsizeslider" type="range" value="85" min="50" max="160"
+                step="1">
+            <span id="iconsize">85</span>
+            </p>
+            <p>
+            <div class="settingtext">カラム数</div><input id="columnslider" type="range" value="5" min="2" max="10" step="1">
+            <span id="columnnum">5</span>
+            </p>
+        </div>
+    </div>
     <div id="maincontents">  
     </div>
-    <div id="termsimage">
-        <canvas id="termcanvas" width="600px" height="400px">
 
+    <div id="termsimage">
+
+        <p>
+        <canvas id="termcanvas" width="600px" height="400px">
         </canvas>
+        </p>
+        <p style="text-align: center">
+        <input type="button" id="imagedownload" value="生成画像をダウンロード">
+        </p>
     </div>
 
 <script type="text/javascript">
@@ -130,12 +189,14 @@
         icons[uid].src = "icons/" + iconname;
     }
     var logo = new Image();
-    logo.src = "logo.png";
+
 
     function generateImage(){
 
-        var iconsize = 85;
-        var col = 5;
+        console.log("generateImage");
+
+        var iconsize = parseInt($("#iconsize").text());
+        var col = parseInt($("#columnnum").text());
         var row = 1;
         const margin = 18;
         const logoheight = 96;
@@ -217,7 +278,7 @@
 
             $("#maincontents").append(termHTML);
         }
-
+        logo.src = "logo.png";
         logo.onload = function(){
             generateImage();
         }
@@ -240,6 +301,43 @@
             $(this).width("50px").height("50px");
         },function(){
             $(this).width("25px").height("25px");
+        });
+
+        $("#iconsizeslider").on("input",function(){
+            $("#iconsize").text($(this).val());
+            generateImage();
+        });
+        $("#columnslider").on("input",function(){
+            $("#columnnum").text($(this).val());
+            generateImage();
+        });
+        $("#setting-pin").change(function(){
+            var checked = $(this).is(":checked");
+            if(checked){
+                $("#termsimage").css("position", "sticky");
+            }else{
+                $("#termsimage").css("position","relative");
+            }
+        });
+        $("#setting").hide();
+        $("#settingbutton").on("click",function(){
+            console.log("click");
+            $("#setting").toggle();
+        });
+        $(document).on("click",function(e){
+            if (!$(e.target).closest('#menu').length) {
+                $('#setting').hide();
+            }
+        });
+        $("input#imagedownload").on("click",function(){
+            console.log("download");
+            var canvas = document.getElementById("termcanvas");
+            var link = document.createElement("a");
+
+            link.href = canvas.toDataURL("image/png");
+            link.download = "vn3license_generateimage.png";
+            link.click();
+            
         });
 
         // // triggered each time a field is checked
