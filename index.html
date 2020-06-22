@@ -149,6 +149,18 @@
             text-align:left;
             font-size: 0.8em;
         }
+        #footer{
+            padding : 0px 10px 5px;
+            z-index: 999;
+            background-color:white;
+            outline:solid 2px;
+            bottom: 0px;
+            width:100%; 
+            font-size:0.8em;
+            color: rgb(100,100,100);
+            text-align: center;
+            background-color: rgb(200,200,200); 
+        }
     </style>
 </head>
 
@@ -179,7 +191,7 @@
             <a href="https://www.vn3.org/">VN3License</a>はVN3ライセンスチーム 2020によって作られたバーチャルネイティブの生活やバーチャル文化、そしてVRの発展に寄与することを目的とした、汎用的なデータ配布用の利用規約のテンプレートです。
         </p>
         <p>
-            このページではVN3Licenseに準拠した利用許諾画像と規約テキストファイルをより簡単に生成・ダウンロードすることができます。
+            このページではVN3License<span id="vn3licenseversion"></span>に準拠した利用許諾画像と規約テキストファイルをより簡単に生成・ダウンロードすることができます。
         </p>
         <p>
             このEasy Generatorについてのお問い合わせは<a href="https://twitter.com/lowteq_vr">@lowteq_vr</a>までお願いします。
@@ -190,7 +202,7 @@
     <hr style="width:900px">
     <div class="content" id="downloadtextpanel">
         <div id="textsettingpanel">
-            <b>ライセンステキスト設定</b>
+            <b>ライセンステキスト入力項目</b>
             <p>
                 <div class="settingtext">利用規約タイトル</div><input type="text" class="dtp-value" id="dtp-title">
             </p>
@@ -241,6 +253,9 @@
         <p style="text-align: center">
             <div class="btn btn--green btn--cubic" id="imagedownload">画像をダウンロード</div>
         </p>
+    </div>
+    <div id="footer">
+        VN3License Easy Generator created by <a href="https://twitter.com/lowteq_vr">@lowteq_vr</a>
     </div>
 
 <script type="text/javascript">
@@ -367,7 +382,7 @@
         //version描画
         ctx.font = versionheight + "px Arial";
         ctx.fillStyle = "rgb(255,255,255)";
-        ctx.fillText("License version:" + license_version, logowidth+margin,versionheight);
+        ctx.fillText("VN3License version:" + license_version, logowidth+margin,versionheight);
     }
     function generateText(){
         var licenseText = licenseTemplate;
@@ -380,7 +395,7 @@
         var author_info = $("#dtp-author_info").val();
         var credit = $("#dtp-credit").val();
         var hashtag = $("#dtp-hashtag").val();
-        var duration = $("#dtp-durationtextarea").val();
+        var duration = $("#durationtextarea").text();
         var version = $("#dtp-version").val();
 
 
@@ -425,6 +440,7 @@
         $('input.lcs_check').lc_switch();
         
         $("#durationtextarea").text($("option:selected", this).text());
+        $("#vn3licenseversion").text(" v" + license_version + " ");
 
         $.get("https://lowteq.github.io/vn3-easy-generator/licensetemplate.txt",function(data){
             licenseTemplate = data;
@@ -456,11 +472,6 @@
         }
         // triggered each time a field changes status
         $(document).on('lcs-statuschange', '.lcs_check', function () {
-            // var status = ($(this).is(':checked')) ? 'checked' : 'unchecked',
-            //     subj = ($(this).attr('type') == 'radio') ? 'radio #' : 'checkbox #',
-            //     num = $(this).val();
-            // console.log(subj + "," + num + "," + status);
-            // $('#third_div ul').prepend('<li><em>[lcs-statuschange]</em>' + subj + num + ' changed status: ' + status + '</li>');
 
             //termのONOFFの更新をtermDataListに反映する
             termDataList[$(this).val()] = $(this).is(":checked");
@@ -510,10 +521,17 @@
             var canvas = document.getElementById("downloadcanvas");
             var link = document.createElement("a");
 
-            link.href = canvas.toDataURL("image/png");
-            link.download = "vn3license_generateimage.png";
-            link.click();
-            
+            var filename = "license_image.png";
+
+            if (canvas.msToBlob) {
+                var blob = canvas.msToBlob();
+                window.navigator.msSaveBlob(blob, filename);
+            }else{
+                link.href = canvas.toDataURL("image/png");
+                link.download = filename;
+                link.click();
+            }
+
         });
         $("#textdownload").on("click",function(){
             console.log("text download");
@@ -533,22 +551,7 @@
 
         });
 
-        // // triggered each time a field is checked
-        // $(document).on('lcs-on', '.lcs_check', function () {
-        //     var subj = ($(this).attr('type') == 'radio') ? 'radio #' : 'checkbox #',
-        //         num = $(this).val();
 
-        //     $('#third_div ul').prepend('<li><em>[lcs-on]</em>' + subj + num + ' is checked</li>');
-        // });
-
-
-        // // triggered each time a is unchecked
-        // $(document).on('lcs-off', '.lcs_check', function () {
-        //     var subj = ($(this).attr('type') == 'radio') ? 'radio #' : 'checkbox #',
-        //         num = $(this).val();
-
-        //     $('#third_div ul').prepend('<li><em>[lcs-off]</em>' + subj + num + ' is unchecked</li>');
-        // });
     });
 
 
