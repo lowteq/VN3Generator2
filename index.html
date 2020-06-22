@@ -11,6 +11,18 @@
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
     <title>VN3License Easy Generator</title>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-18343253-8"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-18343253-8');
+    </script>
+
+
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
     
     <script src="lc_switch.js" type="text/javascript"></script>
@@ -161,6 +173,10 @@
             text-align: center;
             background-color: rgb(200,200,200); 
         }
+        .reqtext{
+            color:red;
+            vertical-align:super;
+        }
     </style>
 </head>
 
@@ -203,14 +219,15 @@
     <div class="content" id="downloadtextpanel">
         <div id="textsettingpanel">
             <b>ライセンステキスト入力項目</b>
+            <form action="" id="textform">
             <p>
-                <div class="settingtext">利用規約タイトル</div><input type="text" class="dtp-value" id="dtp-title">
+                <div class="settingtext">利用規約タイトル<span class="reqtext">*</span></div><input type="text" class="dtp-value" id="dtp-title" required>
             </p>
             <p>
-                <div class="settingtext">権利者名</div><input type="text" class="dtp-value" id="dtp-author_name">
+                <div class="settingtext">権利者名<span class="reqtext">*</span></div><input type="text" class="dtp-value" id="dtp-author_name" required>
             </p>
             <p>
-                <div class="settingtext">許諾対象データ名</div><input type="text" class="dtp-value" id="dtp-data_name">
+                <div class="settingtext">許諾対象データ名<span class="reqtext">*</span></div><input type="text" class="dtp-value" id="dtp-data_name" required>
             </p>
             <p>
                 <div class="settingtext">特記事項</div><input type="text" class="dtp-value" id="dtp-special_notes">
@@ -225,9 +242,9 @@
                 <div class="settingtext">推奨するハッシュタグ</div><input type="text" class="dtp-value" id="dtp-hashtag">
             </p>
             <p>
-                <div class="settingtext">許諾期間および<br>許諾の変更等</div>
+                <div class="settingtext">許諾期間および<br>許諾の変更等<span class="reqtext">*</span></div>
                 <div class="dtp-value">
-                    <select id="dtp-duration" style="width:400px">
+                    <select id="dtp-duration" style="width:400px" required>
                         <option value="1">許諾期間はユーザーとなった日から開始され、権利者によって利用の終了が指示されるまでとします。<br>また、権利者から別途指示がある場合、当該指示は他の定めに優先するものとし、ユーザーはこれに従うか、または利用を終了しなければなりません。指示には本利用規約に関する条件の、追加、変更もしくは削除、または利用の中止が含まれます。権利者が、権利者の管理するウェブサイトやブログ等に指示を掲示し、合理的な方法で周知した場合も同様とします。従って、ユーザーは、合理的な範囲内で定期的に権利者の発信する情報を確認しなければなりません。</option>
                         <option value="2">許諾期間はユーザーとなった日から開始され、期間の定めはありません。権利者が、権利者の管理するウェブサイトやブログ等に本利用規約に関する条件の変更（追加、変更または削除を含みますがこれに限られません）を掲示し合理的な方法で周知した場合において、その効力発生日以降にユーザーが本データを利用した場合は、当該変更に同意したものとみなします。従って、ユーザーは、合理的な範囲内で定期的に権利者の発信する情報を確認しなければなりません。</option>
                         <option value="3">許諾期間はユーザーとなった日から開始され、期間の定めはありません。本許諾または本利用規約は本データのバージョンアップには適用されません。バージョンアップ後のデータには、新たな利用規約が適用されます。</option>
@@ -239,6 +256,10 @@
             <p>
                 <div class="settingtext">規約バージョン</div><input type="text" class="dtp-value" id="dtp-version">
             </p>
+            <p style="text-align: right;margin-right:30px">
+                <span class="reqtext">*</span>は必須項目
+            </p>
+            </form>
         </div>
         <textarea id="termstextarea" cols="120" rows="15" wrap="off" readonly></textarea>
         <p style="text-align: center">
@@ -400,6 +421,7 @@
         var version = $("#dtp-version").val();
 
 
+
         licenseText = replaceAll(licenseText,"{title}",title);
         licenseText = replaceAll(licenseText,"{author_name}",author_name);
         licenseText = replaceAll(licenseText,"{data_name}",data_name);
@@ -537,6 +559,9 @@
         $("#textdownload").on("click",function(){
             console.log("text download");
             
+            if(!$("#textform").get(0).reportValidity()) return;
+
+
             var licenseText = $("#termstextarea").val();
             var blob = new Blob([licenseText]);
             var link = document.createElement("a");
