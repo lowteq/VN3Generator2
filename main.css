@@ -5,6 +5,10 @@ a{
     color: rgb(60,60,60);
     border-bottom: 1px solid;   
 }
+body{
+    /* width:900px; */
+    margin: 0px auto;
+}
 a:hover{
     color: rgb(100,100,100)
 }
@@ -71,8 +75,9 @@ a:hover{
     position: sticky;
     bottom: 0px;
     width:100%;
-    margin-left: 0;
-    margin-right: 0;
+}
+#termsimagepanel>p{
+    margin: 0px -100%;
 }
 #setting{
     padding : 20px;
