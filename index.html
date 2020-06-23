@@ -61,6 +61,9 @@
         </p>
         <p>
             <span style="color:red">利用する場合は、ご自身の責任でご利用ください。VN3ライセンスおよびEasyGenerator製作者はライセンスの法的責任は負わないものとします。</span><br>
+            統計情報として利用する目的でA.～Z.項目のONOFFをサーバーに保存しています（自由記入欄の個人情報などは取得していません）<br>
+        </p>
+        <p>
             このEasy Generatorについてのお問い合わせは<a href="https://twitter.com/lowteq_vr">@lowteq_vr</a>までお願いします。
         </p>
     </div>
@@ -84,7 +87,10 @@
                 <div class="settingtext">特記事項</div><input type="text" class="dtp-value" id="dtp-special_notes">
             </p>
             <p>
-                <div class="settingtext">権利者問い合わせ先</div><input type="text" class="dtp-value" id="dtp-author_info">
+                <div class="settingtext">権利者問い合わせ先</div><input type="text" class="dtp-value" id="dtp-author_reference">
+            </p>
+            <p>
+                <div class="settingtext">ウェブサイト<span class="reqtext">*</div><input type="text" class="dtp-value" id="dtp-author_website" required>
             </p>
             <p>
                 <div class="settingtext">クレジット表記</div><input type="text" class="dtp-value" id="dtp-credit">
@@ -266,7 +272,7 @@
         var data_name = $("#dtp-data_name").val();
         var genterms = generateTerms();
         var special_notes = $("#dtp-special_notes").val();
-        var author_info = $("#dtp-author_info").val();
+        var author_info = "権利者:" + author_name + "\n" + "問い合わせ先:" + $("#dtp-author_reference").val() + "\n" + "ウェブサイト:" + $("#dtp-author_website").val();
         var credit = $("#dtp-credit").val();
         var hashtag = $("#dtp-hashtag").val();
         var duration = $("#durationtextarea").text();
