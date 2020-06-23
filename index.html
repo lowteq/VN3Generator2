@@ -458,18 +458,11 @@
     function sendData(){
 
         var jsondata = JSON.stringify(termDataList);
-        // $.post({
-        //     url:"https://script.google.com/macros/s/AKfycbytXzsdOSSUOQhSm6dDmtXxsAh4JQK_uGm7Rprp25GdI3uGsR88/exec",
-        //     crossDomain: true,
-        //     data:jsondata,
-        //     dataType:"json",
-        // });
-
-        $.ajax({
-            type: "GET",
-            url: "https://script.google.com/macros/s/AKfycbytXzsdOSSUOQhSm6dDmtXxsAh4JQK_uGm7Rprp25GdI3uGsR88/exec",
-            dataType: "jsonp",
-            data: jsondata,
+        $.post({
+            url:"https://script.google.com/macros/s/AKfycbytXzsdOSSUOQhSm6dDmtXxsAh4JQK_uGm7Rprp25GdI3uGsR88/exec",
+            crossDomain: true,
+            data:jsondata,
+            dataType:"json",
         });
 
     };
