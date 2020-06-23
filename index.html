@@ -38,7 +38,7 @@
         <div id="settingbutton"><span style="vertical-align:bottom;font-weight: bold;">画像パネル設定 </span><img src="settings.png" width="40px" height="40px"></div>
         <div id="setting">
             <p>
-                <input type="checkbox" id="setting-pin" checked="checked"><label for="setting-pin" style="user-select: none;">ピン止め</label>
+                <input type="checkbox" id="setting-pin" checked="checked"><label for="setting-pin" style="user-select: none;">📌ピンどめ</label>
             </p>
             <hr>
             <p>
@@ -380,24 +380,23 @@
             generateImage();
             generateText();
         });
+
+        //入力項目リアルタイムでライセンステキストを更新
         $(".dtp-value").keyup(function(){
             generateText();
         });
 
-        $(".term-image > img").hover(function(){
-            $(this).width("50px").height("50px");
-        },function(){
-            $(this).width("25px").height("25px");
-        });
-
+        //image settings 画像幅
         $("#imagewidthslider").on("input",function(){
             $("#imagewidth").text($(this).val());
             generateImage();
         });
+        //image settings カラム数
         $("#columnslider").on("input",function(){
             $("#columnnum").text($(this).val());
             generateImage();
         });
+        //image settings ピンどめ
         $("#setting-pin").change(function(){
             var checked = $(this).is(":checked");
             if(checked){

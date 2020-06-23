@@ -55,8 +55,13 @@ a:hover{
     vertical-align: top;
 }
 .term-image>img{
+
     width:28px;
     height:28px;
+}
+.term-image>img:hover{
+
+    transform: scale(2.3,2.3) translateX(7px);;
 }
 #termsimagepanel{
     padding : 0px 10px 5px;
