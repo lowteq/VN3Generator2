@@ -197,7 +197,7 @@
             <span id="iconsize">85</span>
             </p>
             <p>
-            <div class="settingtext">カラム数</div><input id="columnslider" type="range" value="6" min="2" max="10" step="1">
+            <div class="settingtext">カラム数</div><input id="columnslider" type="range" value="6" min="2" max="24" step="1">
             <span id="columnnum">6</span>
             </p>
         </div>
@@ -455,6 +455,17 @@
         return textterms;
     }
 
+    function sendData(){
+
+        var jsondata = JSON.stringify(termDataList);
+        $.post({
+            url:"https://script.google.com/macros/s/AKfycbytXzsdOSSUOQhSm6dDmtXxsAh4JQK_uGm7Rprp25GdI3uGsR88/exec",
+            data:jsondata,
+            dataType:"json",
+        });
+        
+    };
+
     function replaceAll(str, beforeStr, afterStr){
         var reg = new RegExp(beforeStr, "g");
         return str.replace(reg, afterStr);
@@ -541,6 +552,7 @@
         $("#imagedownload").on("click",function(){
             console.log("image download");
             
+            sendData();
             var canvas = document.getElementById("downloadcanvas");
             var link = document.createElement("a");
 
