@@ -57,23 +57,14 @@
             <a href="https://www.vn3.org/">VN3License</a>はVN3ライセンスチーム 2020によって作られたバーチャルネイティブの生活やバーチャル文化、そしてVRの発展に寄与することを目的とした、汎用的なデータ配布用の利用規約のテンプレートです。
         </p>
         <p>
-            このページではVN3License<span id="vn3licenseversion"></span>に準拠した利用許諾画像と規約テキストファイルをより簡単に生成・ダウンロードすることができます。
+            このページではVN3License<span id="vn3licenseversion"></span>に準拠した利用許諾画像と規約テキストファイルをより簡単に生成・ダウンロードすることができるサードパーティジェネレーターです。
         </p>
         <p>
+            <span style="color:red">利用する場合は、ご自身の責任でご利用ください。VN3ライセンスおよびEasyGenerator製作者はライセンスの法的責任は負わないものとします。</span><br>
             このEasy Generatorについてのお問い合わせは<a href="https://twitter.com/lowteq_vr">@lowteq_vr</a>までお願いします。
         </p>
     </div>
     <div class="content" id="maincontents">  
-    </div>
-    <hr style="width:900px">
-    <div class="content" id="agreementpp">
-        <p style="margin-left: 20px;">
-            <span style="color:red">画像・テキストをダウンロードするにはプライバシーポリシーおよびサイトポリシーの記載事項を確認・同意していただく必要があります。</span><br>
-            <a href="privacy.html" target="_blank">プライバシーポリシーおよびサイトポリシー</a>
-        </p>
-        <p class="chkbox">
-            <input type="checkbox" id="ppcheckbox" name="ppcheckbox"><label for="ppcheckbox">記載事項を確認し、これに同意します</label>
-        </p>
     </div>
     <hr style="width:900px">
     <div class="content" id="downloadtextpanel">
@@ -123,7 +114,7 @@
         </div>
         <textarea id="termstextarea" cols="120" rows="15" wrap="off" readonly></textarea>
         <p style="text-align: center">
-            <button class="btn btn--green btn--cubic" id="textdownload" disabled>テキストをダウンロード</button>
+            <button class="btn btn--green btn--cubic" id="textdownload">テキストをダウンロード</button>
         </p>
     </div>
     <div id="termsimagepanel">
@@ -132,12 +123,12 @@
         </canvas>
         </p>
         <p style="text-align: center">
-            <button class="btn btn--green btn--cubic" id="imagedownload" disabled>画像をダウンロード</button>
+            <button class="btn btn--green btn--cubic" id="imagedownload">画像をダウンロード</button>
         </p>
     </div>
     <div id="footer">
         <span>VN3License Easy Generator created by <a href="https://twitter.com/lowteq_vr">@lowteq_vr</a></span>
-        <span><a href="privacy.html">Privacy Policy</a></span>
+        <span><a href="privacy.html">Privacy Policy & Site Policy</a></span>
     </div>
 
 <script type="text/javascript">
@@ -318,25 +309,8 @@
 
     function sendData(){
 
-        var title = $("#dtp-title").val();
-        var author_name = $("#dtp-author_name").val();
-        var data_name = $("#dtp-data_name").val();
-        var special_notes = $("#dtp-special_notes").val();
-        var author_info = $("#dtp-author_info").val();
-        var credit = $("#dtp-credit").val();
-        var hashtag = $("#dtp-hashtag").val();
-        var duration = $("#dtp-duration").val();
-        var version = $("#dtp-version").val();
 
         var dataobj = objectDeepCopy(termDataList);
-        dataobj["title"] = title;
-        dataobj["author_name"] = author_name;
-        dataobj["special_notes"] = special_notes;
-        dataobj["author_info"] = author_info;
-        dataobj["credit"] = credit;
-        dataobj["hashtag"] = hashtag;
-        dataobj["duration"] = duration;
-        dataobj["version"] = version;
 
         var jsondata = JSON.stringify(dataobj);
 
@@ -439,7 +413,7 @@
         });
         $("#imagedownload").on("click",function(){
             console.log("image download");
-            
+            sendData();
             var canvas = document.getElementById("downloadcanvas");
             var link = document.createElement("a");
 
@@ -453,7 +427,7 @@
                 link.download = filename;
                 link.click();
             }
-            sendData();
+
         });
         $("#textdownload").on("click",function(){
             console.log("text download");
@@ -468,7 +442,6 @@
             link.download = "license.txt";
             link.click();
 
-            sendData();
         });
 
         $("#dtp-duration").change(function(){
@@ -477,16 +450,6 @@
 
         });
 
-        $("#ppcheckbox").change(function(){
-            var r = $(this).is(":checked");
-            if(r){
-                $("#textdownload").prop("disabled",false);
-                $("#imagedownload").prop("disabled",false);
-            }else{
-                $("#textdownload").prop("disabled", true);
-                $("#imagedownload").prop("disabled", true);
-            }
-        });
 
     });
 
