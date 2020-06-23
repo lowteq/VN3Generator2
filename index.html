@@ -42,9 +42,9 @@
             </p>
             <hr>
             <p>
-            <div class="settingtext">アイコンサイズ</div><input id="iconsizeslider" type="range" value="50" min="25" max="200"
+            <div class="settingtext">画像幅</div><input id="imagewidthslider" type="range" value="440" min="440" max="1800"
                 step="1">
-            <span id="iconsize">50</span>
+            <span id="imagewidth">440</span>
             </p>
             <p>
             <div class="settingtext">カラム数</div><input id="columnslider" type="range" value="6" min="2" max="24" step="1">
@@ -61,7 +61,7 @@
         </p>
         <p>
             <span style="color:red">利用する場合は、ご自身の責任でご利用ください。VN3ライセンスおよびEasyGenerator製作者はライセンスの法的責任は負わないものとします。</span><br>
-            統計情報として利用する目的でA.～X.項目のONOFFをサーバーに保存しています（自由記入欄の個人情報などは取得していません）<br>
+            統計情報として利用する目的でA.～X.項目をサーバーに保存しています（自由記入欄の個人情報などは取得していません）<br>
         </p>
         <p>
             このEasy Generatorについてのお問い合わせは<a href="https://twitter.com/lowteq_vr">@lowteq_vr</a>までお願いします。
@@ -90,7 +90,7 @@
                 <div class="settingtext">権利者問い合わせ先</div><input type="text" class="dtp-value" id="dtp-author_reference">
             </p>
             <p>
-                <div class="settingtext">ウェブサイト<span class="reqtext">*</div><input type="text" class="dtp-value" id="dtp-author_website" required>
+                <div class="settingtext">ウェブサイト</div><input type="text" class="dtp-value" id="dtp-author_website">
             </p>
             <p>
                 <div class="settingtext">クレジット表記</div><input type="text" class="dtp-value" id="dtp-credit">
@@ -208,7 +208,7 @@
 
         console.log("generateImage");
 
-        var iconsize = parseInt($("#iconsize").text());
+        var imagewidth = parseInt($("#imagewidth").text());
         var col = parseInt($("#columnnum").text());
         var row = 1;
         const margin = 18;
@@ -229,8 +229,7 @@
         console.log("onNum="+ onNum + " " + col + " " + row);
         var canvas = document.getElementById('downloadcanvas');
 
-        //200はversion描画の横幅
-        var imagewidth = Math.max(iconsize * col + 2 * margin, logowidth + 200);
+        var iconsize = (imagewidth - 2*margin)/col;
         var imageheight = logoheight + iconsize * row + margin;
         
         canvas.width = imagewidth;
@@ -391,8 +390,8 @@
             $(this).width("25px").height("25px");
         });
 
-        $("#iconsizeslider").on("input",function(){
-            $("#iconsize").text($(this).val());
+        $("#imagewidthslider").on("input",function(){
+            $("#imagewidth").text($(this).val());
             generateImage();
         });
         $("#columnslider").on("input",function(){
