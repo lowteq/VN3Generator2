@@ -4,7 +4,7 @@
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=900px,initial-scale=1.0">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
@@ -123,10 +123,10 @@
             <button class="btn btn--green btn--cubic" id="textdownload">テキストをダウンロード</button>
         </p>
     </div>
-    <div id="termsimagepanel">
+    <div id="termsimagepanel" class="">
         <p>
-        <canvas id="downloadcanvas" width="600px" height="400px">
-        </canvas>
+            <canvas id="downloadcanvas" width="600px" height="400px">
+            </canvas>
         </p>
         <p style="text-align: center">
             <button class="btn btn--green btn--cubic" id="imagedownload">画像をダウンロード</button>
@@ -400,7 +400,7 @@
         $("#setting-pin").change(function(){
             var checked = $(this).is(":checked");
             if(checked){
-                $("#termsimagepanel").css("position", "sticky");
+                $("#termsimagepanel").css("position", "fixed");
             }else{
                 $("#termsimagepanel").css("position","relative");
             }
