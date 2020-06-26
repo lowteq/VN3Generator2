@@ -86,8 +86,9 @@ a:hover{
     outline:solid 1px;
     background-color: rgba(255,255,255,0.9);
     z-index: 1001;
-    position: absolute;
-    margin-left: 500px;
+    position: fixed;
+    right:30px;
+    top:80px;
 
     float: left bottom;;
 }
@@ -105,8 +106,10 @@ a:hover{
     margin-right: 10px;
 }
 #menu{
-    margin:  0px auto;
-    width:900px;
+    width:400px;
+    position:fixed;
+    right:30px;
+    top:10px;
 }
 #settingbutton{
     text-align: right;
