@@ -71,9 +71,15 @@ a:hover{
     position: sticky;
     bottom: 0px;
     width:100%;
-    margin-left: 0;
-    margin-right: 0;
+    margin: 0 auto;
 }
+#termsimagepanel{
+
+    width:100%;
+    display:block;
+}
+
+
 #setting{
     padding : 20px;
     width:400px;
