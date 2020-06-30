@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>icon</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-18343253-8"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-18343253-8');
+    </script>
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
+    
+    <script src="lc_switch.js" type="text/javascript"></script>
+    <script src="main.js" type="text/javascript"></script>
+    
+    <link rel="stylesheet" href="lc_switch.css">
+    <link rel="stylesheet" href="main.css">
+    <style type="text/css">
+        .term{
+            margin:20px 40px;
+            display: block;
+        }
+        .term-image-icons{
+            display: inline-block;
+            vertical-align: top;
+        }
+    </style>
+</head>
+<body>
+    <div class="content" id="header">
+        <a href="index.html">
+            <h1>VN3License Easy Generator</h1>
+        </a>
+    </div>
+
+    <div class="content" id="maincontents">
+    </div>
+    <div id="footer">
+        <span>VN3License Easy Generator created by <a href="https://twitter.com/lowteq_vr">@lowteq_vr</a></span>
+        <span><a href="privacy.html">Privacy Policy & Site Policy</a></span>
+    </div>
+    
+    <script type="text/javascript">
+        
+        var termhtmltemplate = '<div class="term">\
+                    <div class="term-image-icons"><img src = "icons/{icon_name}" width = "60px" height = "60px"></div>\
+                    <div class="term-text">{term}</div>\
+                    </div >';
+
+        $(document).ready(function (e) {
+            for (var i=0;i<terms.length;i++){
+                var addtermhtml = termhtmltemplate;
+                var iconname = terms[i][4];
+                var termtext = terms[i][1];
+                var termsindex = terms[i][0];
+                addtermhtml = replaceAll(addtermhtml,"{icon_name}",iconname);
+                addtermhtml = replaceAll(addtermhtml,"{term}",termsindex +". "+ termtext);
+                $("#maincontents").append(addtermhtml);
+            }
+        });
+        
+    </script>
+</body>
+</html>

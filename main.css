@@ -6,7 +6,8 @@ a{
     border-bottom: 1px solid;   
 }
 a:hover{
-    color: rgb(100,100,100)
+    color: rgb(100,100,100);
+    border-bottom: none;
 }
 .content{
     margin: 20px auto;
@@ -20,6 +21,19 @@ a:hover{
     border-radius: 3px;
     box-shadow: 0 0px 20px rgba(0,0,0,0.2);
 }
+#mainmenu{
+    position: relative;
+    height:43px;
+}
+#mainmenu>div{
+    display: inline-block;
+    font-weight: bold;
+    font-size:0.9em;
+    outline:solid 1px;;
+    padding:10px;
+
+}
+
 #overview{
     padding : 20px;
     margin: 20px auto;
@@ -85,11 +99,10 @@ a:hover{
     width:400px;
     outline:solid 1px;
     background-color: rgba(255,255,255,0.9);
-    z-index: 1001;
+    z-index: 1100;
     position: fixed;
     right:30px;
     top:80px;
-
     float: left bottom;;
 }
 #downloadcanvas{
@@ -110,6 +123,7 @@ a:hover{
     position:fixed;
     right:30px;
     top:10px;
+    z-index:1100;
 }
 #settingbutton{
     text-align: right;
@@ -186,6 +200,14 @@ h3{
     font-size:16px;
     font-weight: bold;
 }
+
+.menu-left{
+    float: left;
+}
+.menu-right{
+    float:right;
+}
+
 .chkbox {
 	margin:			0 0 10px 20px;
 }
