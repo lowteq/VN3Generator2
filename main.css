@@ -207,6 +207,12 @@ h3{
 .menu-right{
     float:right;
 }
+.termsection-header{
+    padding-top:20px;
+    font-size:1.2em;
+    font-weight: bold;
+    color: #404040;
+}
 
 .chkbox {
 	margin:			0 0 10px 20px;

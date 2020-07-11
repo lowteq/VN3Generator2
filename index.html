@@ -76,7 +76,55 @@
             このEasy Generatorについてのお問い合わせは<a href="https://twitter.com/lowteq_vr">@lowteq_vr</a>までお願いします。
         </p>
     </div>
-    <div class="content" id="maincontents">  
+    <div class="content" id="maincontents">
+        <div class="termsection-header">
+            利用主体
+        </div>
+        <div id="termsection-user">
+
+        </div>
+        <div class="termsection-header">
+            オンラインサービスへのアップロード
+        </div>
+        <div id="termsection-upload">
+
+        </div>
+        <div class="termsection-header">
+            センシティブな表現
+        </div>
+        <div id="termsection-sensitive">
+
+        </div>
+        <div class="termsection-header">
+            加工
+        </div>
+        <div id="termsection-processing">
+
+        </div>
+        <div class="termsection-header">
+            再配布・配布
+        </div>
+        <div id="termsection-distribution">
+
+        </div>
+        <div class="termsection-header">
+            メディア・プロダクトへの利用
+        </div>
+        <div id="termsection-productuse">
+
+        </div>
+        <div class="termsection-header">
+            二次創作
+        </div>
+        <div id="termsection-secondarycreation">
+
+        </div>
+        <div class="termsection-header">
+            その他
+        </div>
+        <div id="termsection-other">
+
+        </div>
     </div>
     <hr style="width:900px">
     <div class="content" id="downloadtextpanel">
@@ -334,24 +382,42 @@
         });
 
         //ONOFF条項テキストのDOMを作成してHTMLに追加する
-        for(let i = 0;i<terms.length;i++) {
 
-            var termHTML = termTemplate;
-            
-            var termIndex = terms[i][0];
-            var termText = termIndex + ". " +  terms[i][1];
-            var termOnText = terms[i][2];
-            var termOffText = terms[i][3];
-            var termImageURL = "icons/" + terms[i][4];
+        let termsection = 
+            [["#termsection-user",[0,1]],
+             ["#termsection-upload",[2,3,4]],
+             ["#termsection-sensitive",[5,6,7]],
+             ["#termsection-processing",[8,9,10,11]],
+             ["#termsection-distribution",[12,13]],
+             ["#termsection-productuse",[14,15,16,17]],
+             ["#termsection-secondarycreation",[18,19,20]],
+             ["#termsection-other",[21,22,23]]
+            ];
 
-            termHTML = termHTML.replace("{term_index}",termIndex);
-            termHTML = termHTML.replace("{term_text}",termText);
-            termHTML = termHTML.replace("{term_on}",termOnText);
-            termHTML = termHTML.replace("{term_off}",termOffText);
-            termHTML = termHTML.replace("{term_imageurl}",termImageURL);
+        termsection.forEach(function(item){
+            let sectionid = item[0];
+            let sectionindexlist = item[1];
+            sectionindexlist.forEach(function(i){
 
-            $("#maincontents").append(termHTML);
-        }
+                var termHTML = termTemplate;
+
+                var termIndex = terms[i][0];
+                var termText = termIndex + ". " + terms[i][1];
+                var termOnText = terms[i][2];
+                var termOffText = terms[i][3];
+                var termImageURL = "icons/" + terms[i][4];
+
+                termHTML = termHTML.replace("{term_index}", termIndex);
+                termHTML = termHTML.replace("{term_text}", termText);
+                termHTML = termHTML.replace("{term_on}", termOnText);
+                termHTML = termHTML.replace("{term_off}", termOffText);
+                termHTML = termHTML.replace("{term_imageurl}", termImageURL);
+
+                $(sectionid).append(termHTML);
+
+            });
+        });
+
         logo.src = "logo.png";
         logo.onload = function(){
             generateImage();
