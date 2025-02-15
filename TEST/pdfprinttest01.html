@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>印刷サンプル</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .section {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        #download-pdf {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #download-pdf:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="download-pdf">印刷</button>
+
+    <div class="section">
+        <h1>セクション1</h1>
+        <p>これは最初のセクションです。ここが印刷されます。</p>
+    </div>
+
+    <div class="section">
+        <h1>セクション2</h1>
+        <p>これは2番目のセクションです。これも印刷されます。</p>
+    </div>
+
+    <div>
+        <h1>非印刷セクション</h1>
+        <p>これは印刷されません。</p>
+    </div>
+
+    <script>
+        document.getElementById('download-pdf').addEventListener('click', () => {
+            // .sectionクラスの要素を取得
+            const sections = document.querySelectorAll('.section');
+
+            // 印刷用のHTMLを準備
+            let printContent = '';
+            sections.forEach(section => {
+                printContent += section.outerHTML; // .section要素をHTML文字列として取得
+            });
+
+            // 一時的な印刷用ウィンドウを作成
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write('<!DOCTYPE html>');
+            printWindow.document.write('<html><head><title>印刷</title>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(printContent);
+            printWindow.document.write('</bo' + 'dy></ht' + 'ml>');
+            printWindow.document.close();
+            printWindow.focus();
+
+            // 印刷ダイアログを開く
+            printWindow.print();
+
+            // 印刷後にウィンドウを閉じる
+            printWindow.close();
+        });
+    </script>
+</body>
+
+</html>

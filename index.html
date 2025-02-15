@@ -1,516 +1,675 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=900px,initial-scale=1.0">
+    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>VN3ライセンス利用規約ジェネレータ Ver2.0</title>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-
-    <title>VN3License Easy Generator</title>
-
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-18343253-8"></script>
+    <script src="vue@2.js"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
+        // Vue の設定は Vue インスタンス生成前に行う必要があります
+        Vue.config.devtools = true;
+        const LicenseItemType = {
+            CLAUSE: "clause",
+            NESTED_CLAUSE: "nestedClause",
+            FREE_TEXT: "freeText"
+        };
 
-        gtag('config', 'UA-18343253-8');
     </script>
-
-
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
-    
-    <script src="lc_switch.js" type="text/javascript"></script>
-    <script src="main.js" type="text/javascript"></script>
-    
-    <link rel="stylesheet" href="lc_switch.css">
-    <link rel="stylesheet" href="main.css">
+    <script src="./translations.js" defer></script>
+    <script src="licenseData.js" defer></script>
+    <script src="main.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <div class="content" id="header">
-        <h1>VN3License Easy Generator</h1>
-    </div>
-    <div class="content" id="mainmenu">
-                <div class="menu-left"><a href="https://www.vn3.org/icons" target="_blank">アイコンデータ</a></div>
-                <div class="menu-left"><a href="https://www.vn3.org/terms" target="_blank">本文・解説</a></div>
-                <div class="menu-left"><a href="https://www.vn3-portal.org/" target="_blank">VN3Licenseポータルサイト</a></div>
-                <!-- <div class="menu-right"><a href="https://www.vn3.org/" target="_blank">VN3License公式</a></div> -->
-    </div>
 
-    <div class="content" id="menu">
-        <div id="settingbutton"><span style="vertical-align:bottom;font-weight: bold;">画像パネル設定 </span><img src="settings.png" width="40px" height="40px"></div>
-        <div id="setting">
-            <p>
-                <input type="checkbox" id="setting-pin" checked="checked"><label for="setting-pin" style="user-select: none;">📌ピンどめ</label>
-            </p>
+
+    <div id="app" v-cloak>
+        <div id="app-section">
+            <h1><img src="VN3License_Logo.png" width="150px"><br>VN3ライセンス利用規約ジェネレータ
+                Ver{{placeholders.vn3generatorversion}}
+            </h1>
+            <h2>VN3ライセンスVer.{{placeholders.vn3version}}に準拠したジェネレータです。日本語の利用規約と英語の参考訳、韓国語・中国語の簡易参考表を作成できます。</h2>
+            <div class="info">
+
+                <p><span class="required">*</span> は必須事項です。</p>
+                <form>
+                    <!-- 利用確認 -->
+                    <div class="form-group">
+                        <label for="agreement">ジェネレーター利用に関する確認 <span class="required">*</span></label>
+                        <p>このジェネレータは、VN3ライセンスに係るプライバシーポリシーおよびサイトポリシー（https://www.vn3.org/policy）ならびに、VN3ライセンス利用規約ジェネレータの注意事項（https://www.vn3.org/generator）に従って提供されます。これらの記載内容を確認し、同意しなければ利用することはできません。また、作成された規約は、自己責任にて使用してください。このジェネレータによって作成された利用規約によって生じた一切の事由について、VN3ライセンスチームのメンバーはもとより、作成にかかわっていただいた方は一切の責任を取りません。
+                        </p>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="agreement" v-model="placeholders.agreement" required>
+                            <label for="agreement" style="margin: 0;">記載事項を確認し、これに同意します。</label>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="version">利用規約のバージョン <span class="required">*</span></label>
+                        <p>規約を改正する場合に備えて権利者が管理しやすい番号や文章を任意形式で入力してください。
+                        </p>
+                        <input type="text" id="version" v-model="placeholders.version" name="version"
+                            placeholder="例：1.00、バージョン１、ver.20200501 など" required>
+                    </div>
+
+
+                    <div class="form-group" id="terms-title-container">
+                        <label for="terms-title">利用規約タイトル <span class="required">*</span></label>
+                        <p>作成される利用規約のタイトルを入力してください。「〇〇利用規約」として表示されます。</p>
+                        <div class="input-group">
+                            <!-- 入力部分 -->
+                            <input type="text" id="terms-title" v-model="placeholders.termsTitle" name="terms-title"
+                                placeholder="例: ひろこちゃん3Dモデル" required>
+                            <!-- 接尾文字 -->
+                            <span class="input-group-text">利用規約</span>
+                        </div>
+                    </div>
+
+
+
+                    <!-- 許諾対象データ -->
+                    <div class="form-group">
+                        <label for="permitted-data">許諾対象データ <span class="required">*</span></label>
+                        <textarea id="permitted-data" v-model="placeholders.permittedData" name="permitted-data"
+                            rows="3" placeholder="例:ひろこちゃん3Dモデル、ひろこちゃんにゃんにゃん3Dモデル、これらに付属するデータ一式など" required></textarea>
+                    </div>
+
+
+                    <!-- 権利者および権利者への問い合わせ先 -->
+                    <div class="form-group">
+                        <label>権利者および権利者への問い合わせ先</label>
+                        <div>
+                            <p>権利者: <span class="required">*</span> <input type="text" v-model="placeholders.rightsName"
+                                    placeholder="例: あしやまひろこ" required></p>
+                            <p>メール: <input type="email" v-model="placeholders.rightsEmail"
+                                    placeholder="例: example@example.com"></p>
+                            <p>X(Twitter): <input type="text" v-model="placeholders.rightsX"
+                                    placeholder="例: @hiroko_TB">
+                            </p>
+                            <p>ウェブサイト: <input type="text" v-model="placeholders.rightsWebsite"
+                                    placeholder="例: https://example.com"></p>
+                        </div>
+
+
+
+
+                    </div>
+
+                    <!-- クレジット表記 -->
+                    <div class="form-group">
+                        <label for="credit">クレジット表記</label>
+                        <input type="text" id="credit" v-model="placeholders.credit" name="credit"
+                            placeholder="例: テクノコスプレ製作所">
+                    </div>
+
+                    <!-- 推奨するハッシュタグ -->
+                    <div class="form-group">
+                        <label for="hashtags">推奨するハッシュタグ</label>
+                        <textarea id="hashtags" v-model="placeholders.hashtags" name="hashtags" rows="3"
+                            placeholder="例:#ひろこ3D"></textarea>
+                    </div>
+
+                    <!-- 許諾期間および許諾の変更等 -->
+                    <div class="form-group">
+                        <label>許諾期間および許諾の変更等 <span class="required">*</span></label>
+                        <select id="permission-period" v-model="placeholders.permissionPeriodKey">
+                            <option value="A">【Aパターン】{{permissionPeriodOptions.A}}
+                            </option>
+                            <option value="B">【Bパターン】{{permissionPeriodOptions.B}}
+                            </option>
+                            <option value="C">【Cパターン】{{permissionPeriodOptions.C}}
+                            </option>
+                            <option value="D">【Dパターン】 自由記述</option>
+                        </select>
+                        <div class="permissionPeriodText">{{permissionPeriodText}}</div>
+                        <textarea v-if="placeholders.permissionPeriodKey === 'D'"
+                            v-model="placeholders.permissionPeriodCustom" rows="3" placeholder="自由記述を入力してください">
+                    </textarea>
+                        <div class="tips-permission-period">
+                            <div class="tips-label"><strong>Tips:</strong></div>
+                            <div class="tips-content">
+                                <div>【Aパターン】一般的な商慣習からすると妥当な水準です。権利者は常識的な方法で規約の変更を行うことができます。</div>
+                                <div>
+                                    【Bパターン】最も安全な内容です。事実上、権利者は任意のタイミングでモデルの規約内容を変更することができます。ただし販売モデルの場合などは、アバター等に限らない世間一般の商慣習からすると権利者の権利が強すぎるという指摘を受ける可能性はあり得ます。また、いつでも利用中止の指示もできるため、利用者からすると使いづらいと感じる可能性があります。
+                                </div>
+                                <div>
+                                    【Cパターン】データを売り切り、後から規約の変更を行わない場合に適している内容です。ただしこの場合、ユーザーにとって不利な条件変更を後からすることはできませんが、ユーザーに対して有利な修正に限っては後から行うことができます。
+                                </div>
+                                <div>
+                                    【Dパターン】上記３案に該当しない場合は自由記述をすることもできます
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </form>
+            </div>
+            <div v-for="(category, catIndex) in licenseCategories" :key="catIndex" class="category">
+                <h2>{{category.termID}} {{ category.name }}</h2>
+                <p class="category-description">{{category.description}}</p>
+                <div v-for="(item, index) in category.items" :key="index" class="license-item">
+                    <!-- 条項 -->
+                    <div v-if="item.type === LicenseItemType.CLAUSE" class="clause">
+                        <div class="clause-container">
+                            <div class="term-container">
+                                <img v-if="item.icon" :src="item.icon" alt="icon" class="item-icon" />
+
+                                <h3 :class="{ 'disabled-term': !item.visibility }" :id="item.termID">{{item.termID}}
+                                    {{ item.term }}</h3>
+                                <label class="switch">
+                                    <input type="checkbox" v-model="item.visibility" class="visibility-toggle"
+                                        @change="handleVisibilityChange(item)" />
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div v-if="item.visibility">
+                                <div v-for="(option, optionIndex) in item.options" :key="optionIndex" class="option">
+                                    <label>
+                                        <input type="radio" :name="item.termID" :value="option"
+                                            v-model="item.selectedOption" @change="handleOptionChange(option)">
+                                        {{ option }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Tips -->
+                        <div v-if="item.tips" class="tips">
+                            <p><strong>Tips:</strong> {{ item.tips }}</p>
+                        </div>
+                        <div v-if="item.userTips" class="tips">
+                            <p><strong>Tips:</strong> {{ item.userTips }}</p>
+                        </div>
+                    </div>
+
+                    <!-- ネスト条項 -->
+                    <div v-if="item.type === LicenseItemType.NESTED_CLAUSE" class="nested-clause">
+                        <div class="clause-container">
+                            <div class="term-container">
+                                <img v-if="item.icon" :src="item.icon" alt="icon" class="item-icon" />
+                                <h3 :class="{ 'disabled-term': !item.visibility }">{{item.termID}} {{ item.term }}</h3>
+                                <label class="switch">
+                                    <input type="checkbox" v-model="item.visibility" class="visibility-toggle"
+                                        @change="handleVisibilityChange(item)" />
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div v-if="item.visibility">
+                                <div v-for="(nestedItem, nestedIndex) in item.nestedItems" :key="nestedIndex"
+                                    class="nested-item">
+                                    <div class="nested-term-container" :id="nestedItem.termID">
+                                        <img v-if="nestedItem.icon" :src="nestedItem.icon" alt="icon"
+                                            class="item-icon" />
+
+                                        <h4 :class="{ 'disabled-term': !nestedItem.visibility }">{{ nestedItem.term }}
+                                        </h4>
+                                        <label class="switch">
+                                            <input type="checkbox" v-model="nestedItem.visibility"
+                                                class="visibility-toggle"
+                                                @change="handleVisibilityChange(item,nestedItem)" />
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div v-if="nestedItem.visibility">
+                                        <div v-for="(option, optionIndex) in nestedItem.options" :key="optionIndex"
+                                            class="option">
+                                            <label>
+                                                <input type="radio" :name="nestedItem.termID" :value="option"
+                                                    v-model="nestedItem.selectedOption"
+                                                    @change="handleOptionChange(option)">
+                                                {{ option }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="item.tips" class="tips">
+                            <p><strong>Tips:</strong> {{ item.tips }}</p>
+                        </div>
+                        <div v-if="item.userTips" class="tips">
+                            <p><strong>Tips:</strong> {{ item.userTips }}</p>
+                        </div>
+                    </div>
+
+
+
+                    <!-- 自由記述 -->
+                    <div v-if="item.type === LicenseItemType.FREE_TEXT" class="free-text">
+                        <div class="clause-container">
+                            <div class="term-container">
+                                <img v-if="item.icon" :src="item.icon" alt="icon" class="item-icon" />
+                                <h3 :class="{ 'disabled-term': !item.visibility }">{{item.termID}} {{ item.term }}</h3>
+                                <label class="switch">
+                                    <input type="checkbox" v-model="item.visibility" class="visibility-toggle"
+                                        @change="handleVisibilityChange(item)" />
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div v-if="item.visibility">
+                                <textarea v-model="item.text" :placeholder="item.defaultText"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- メールアドレスの登録とアンケート -->
+
+            <div class="form-group">
+                <label for="email">メールアドレスの登録</label>
+                <p>VN3ライセンスのバージョンアップのお知らせや、その他VN3ライセンスや運営にかかわるお知らせを希望される場合はメールアドレスを入力してください。（※メルマガのようなものではなく、重要な更新などがあった場合にのみアナウンスのために送付します）
+                </p>
+                <input type="email" id="email" v-model="placeholders.email" name="email"
+                    placeholder="例: example@gmail.com">
+            </div>
+
+
             <hr>
-            <p>
-            <div class="settingtext">画像幅</div><input id="imagewidthslider" type="range" value="440" min="440" max="1800"
-                step="1">
-            <span id="imagewidth">440</span>
-            </p>
-            <p>
-            <div class="settingtext">カラム数</div><input id="columnslider" type="range" value="6" min="2" max="24" step="1">
-            <span id="columnnum">6</span>
-            </p>
-        </div>
-    </div>
-    <div class="content" id="overview">
-        <p>
-            <a href="https://www.vn3.org/">VN3ライセンス</a>はVN3ライセンスチーム 2020によって作られたバーチャルネイティブの生活やバーチャル文化、そしてVRの発展に寄与することを目的とした、汎用的なデータ配布用の利用規約のテンプレートです。
-        </p>
-        <p>
-            このページではVN3License<span id="vn3licenseversion"></span>に準拠した利用許諾画像と規約テキストファイルをより簡単に生成・ダウンロードすることができるサードパーティジェネレーターです。
-        </p>
-        <p>
-            <span style="color:red">利用する場合はご自身の責任でご利用ください。VN3ライセンスおよびEasyGenerator製作者はライセンスの法的責任は負わないものとします。</span><br>
-            統計情報として利用する目的でA.～X.項目をサーバーに保存しています（自由記入欄の個人情報などは取得していません）<br>
-        </p>
-        <p>
-            このEasy Generatorについてのお問い合わせは<a href="https://twitter.com/lowteq_vr">@lowteq_vr</a>までお願いします。
-        </p>
-    </div>
-    <div class="content" id="maincontents">
-        <div class="termsection-header">
-            利用主体
-        </div>
-        <div id="termsection-user">
+            <div v-if="!checkAllOptionsSelected() || !validateForm()[0]" class="warning">全ての項目を選択してください
+                <br><br>
+                <div v-for="error in validateForm()[1]">
+                    {{error}}&nbsp;
+                </div>
+                <span v-for="term in findUnselectedTerms()">
+                    <a :href="'#' + term.termID">{{term.termIDText}}</a>&nbsp;
+                </span>
 
-        </div>
-        <div class="termsection-header">
-            オンラインサービスへのアップロード
-        </div>
-        <div id="termsection-upload">
-
-        </div>
-        <div class="termsection-header">
-            センシティブな表現
-        </div>
-        <div id="termsection-sensitive">
-
-        </div>
-        <div class="termsection-header">
-            加工
-        </div>
-        <div id="termsection-processing">
-
-        </div>
-        <div class="termsection-header">
-            再配布・配布
-        </div>
-        <div id="termsection-distribution">
-
-        </div>
-        <div class="termsection-header">
-            メディア・プロダクトへの利用
-        </div>
-        <div id="termsection-productuse">
-
-        </div>
-        <div class="termsection-header">
-            二次創作
-        </div>
-        <div id="termsection-secondarycreation">
-
-        </div>
-        <div class="termsection-header">
-            その他
-        </div>
-        <div id="termsection-other">
-
-        </div>
-    </div>
-    <hr style="width:900px">
-    <div class="content" id="downloadtextpanel">
-        <div id="textsettingpanel">
-            <b>ライセンステキスト入力項目</b>
-            <form action="" id="textform">
-            <p>
-                <div class="settingtext">利用規約タイトル<span class="reqtext">*</span></div><input type="text" class="dtp-value" id="dtp-title" required>
-            </p>
-            <p>
-                <div class="settingtext">権利者名<span class="reqtext">*</span></div><input type="text" class="dtp-value" id="dtp-author_name" required>
-            </p>
-            <p>
-                <div class="settingtext">許諾対象データ名<span class="reqtext">*</span></div><input type="text" class="dtp-value" id="dtp-data_name" required>
-            </p>
-            <p>
-                <div class="settingtext">特記事項</div><input type="text" class="dtp-value" id="dtp-special_notes">
-            </p>
-            <p>
-                <div class="settingtext">権利者問い合わせ先</div><input type="text" class="dtp-value" id="dtp-author_reference">
-            </p>
-            <p>
-                <div class="settingtext">ウェブサイト</div><input type="text" class="dtp-value" id="dtp-author_website">
-            </p>
-            <p>
-                <div class="settingtext">クレジット表記</div><input type="text" class="dtp-value" id="dtp-credit">
-            </p>
-            <p>
-                <div class="settingtext">推奨するハッシュタグ</div><input type="text" class="dtp-value" id="dtp-hashtag">
-            </p>
-            <p>
-                <div class="settingtext">許諾期間および<br>許諾の変更等<span class="reqtext">*</span></div>
-                <div class="dtp-value">
-                    <select id="dtp-duration" style="width:400px" required>
-                        <option value="1">許諾期間はユーザーとなった日から開始され、権利者によって利用の終了が指示されるまでとします。<br>また、権利者から別途指示がある場合、当該指示は他の定めに優先するものとし、ユーザーはこれに従うか、または利用を終了しなければなりません。指示には本利用規約に関する条件の、追加、変更もしくは削除、または利用の中止が含まれます。権利者が、権利者の管理するウェブサイトやブログ等に指示を掲示し、合理的な方法で周知した場合も同様とします。従って、ユーザーは、合理的な範囲内で定期的に権利者の発信する情報を確認しなければなりません。</option>
-                        <option value="2">許諾期間はユーザーとなった日から開始され、期間の定めはありません。権利者が、権利者の管理するウェブサイトやブログ等に本利用規約に関する条件の変更（追加、変更または削除を含みますがこれに限られません）を掲示し合理的な方法で周知した場合において、その効力発生日以降にユーザーが本データを利用した場合は、当該変更に同意したものとみなします。従って、ユーザーは、合理的な範囲内で定期的に権利者の発信する情報を確認しなければなりません。</option>
-                        <option value="3">許諾期間はユーザーとなった日から開始され、期間の定めはありません。本許諾または本利用規約は本データのバージョンアップには適用されません。バージョンアップ後のデータには、新たな利用規約が適用されます。</option>
+            </div>
+            <div class="pdf-action-container">
+                <div class="preview-select">
+                    <label for="language-select" class="inline-label">PDFの言語を選択:</label>
+                    <select id="language-select" v-model="currentLanguage" ref="languageSelect">
+                        <option value="ja" selected>【JA】日本語版 簡易一覧・本文</option>
+                        <option value="en">【EN】英語版 簡易一覧・本文</option>
+                        <option value="ko">【KO】韓国語版 簡易一覧</option>
+                        <option value="zh_tw">【ZH TW】中国語版(繁体字) 簡易一覧</option>
+                        <option value="zh_cn">【ZH CN】中国語版(簡体字) 簡易一覧</option>
                     </select>
-                    <div class="dtp-value" id="durationtextarea"></div>
+                </div>
+                <div class="arrow-icon">
+                    <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 下向きの三角形: 上側の2点、下側の1点 -->
+                        <polygon points="50,70 20,30 80,30" fill="black">
+                            <!-- 縦方向に10px動いて戻るアニメーション -->
+                            <animateTransform attributeName="transform" type="translate" values="0 0; 0 10; 0 0"
+                                dur="1s" repeatCount="indefinite" />
+                        </polygon>
+                    </svg>
+                </div>
+                <div class="download-section">
+                    <div><button id="download-pdf" @click="downloadPDF">PDFをダウンロード</button></div>
+                    <p>印刷画面が開きます。設定で「PDFに保存」を選択してください。</p>
+                </div>
+            </div>
+        </div>
+        <!-- ここからPDFに送るデータ -->
+        <div class="pdf-section-container">
+            <div class="pdf-preview-description">
+                PDFプレビュー画面
+            </div>
+            <div class="pdf-section" translate="no">
+                <div class="section">
+                    <div class="simple-title-header">
+                        {{translate(licenseText.simpleTitle)}}
+
+                    </div>
+                    <div class="simple-title-description">{{translate(licenseText.simpleDescription)}}</div>
+
+                    <div class="simple-inditermsection">
+                        <div class="simple-grid-item" v-for="category in licenseCategories" :key="category.name"
+                            v-if="category.items.some(item => item.visibility)">
+                            <div class="simple-title">{{category.termID}} {{translate(category.name)}}</div>
+                            <div class="simple-items-container">
+                                <div v-for="item in category.items" :key="item.termID || item.type" :class="[
+                          'simple-term-item',
+                          { 
+                            'simple-2column-item': category.items.length === 2,
+                            'simple-1column-item': category.items.length === 1
+                          }
+                        ]" v-show="item.visibility">
+                                    <!-- NESTED_CLAUSE -->
+                                    <template v-if="item.type === LicenseItemType.NESTED_CLAUSE">
+
+                                        <div class="simple-icon-and-term">
+                                            <img :src="item.icon" class="simple-icon" :alt="item.simpleTerm" />
+                                            <div class="simple-term">{{item.termID}} {{translate(item.simpleTerm)}}
+                                            </div>
+                                        </div>
+                                        <div class="simple-nested-items" v-for="nested in item.nestedItems"
+                                            :key="nested.termID" v-show="nested.visibility">
+                                            - {{translate(nested.simpleTerm)}}
+                                            <div class="placeholder simple-selectedOption">
+                                                {{translate(nested.selectedOption)}}
+                                            </div>
+                                        </div>
+
+                                    </template>
+
+                                    <!-- CLAUSE -->
+                                    <template v-else-if="item.type === LicenseItemType.CLAUSE">
+                                        <div class="simple-icon-and-term">
+                                            <img :src="item.icon" class="simple-icon" :alt="item.simpleTerm" />
+                                            <div class="simple-term">{{item.termID}} {{translate(item.simpleTerm)}}
+                                            </div>
+                                        </div>
+                                        <div class="placeholder simple-selectedOption">
+                                            {{translate(item.selectedOption)}}</div>
+                                    </template>
+
+                                    <!-- FREE_TEXT -->
+                                    <template v-else-if="item.type === LicenseItemType.FREE_TEXT">
+                                        <div class="simple-icon-and-term">
+                                            <img :src="item.icon" class="simple-icon" :alt="item.simpleTerm" />
+                                            <div class="simple-term">{{item.termID}} {{translate(item.simpleTerm)}}
+                                                <div class="placeholder simple-free-text multiline-text">{{ item.text ||
+                                                    item.defaultText
+                                                    }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="section">
+
+                    <div class="license-info-container no-page-break">
+
+                        <div class="license-info-block">
+                            <div class="license-info-title">{{translate(licenseText.licensedData)}}</div>
+                            <div class="license-info-contents">{{placeholders.permittedData}}</div>
+                        </div>
+
+                        <div class="license-info-block">
+                            <div class="license-info-title">{{translate(licenseText.rightsHolderInfo)}}</div>
+                            <div class="license-info-contents">
+                                <div class="license-info-row-inner">
+                                    <div class="inner-title">
+                                        {{ translate(licenseText.rightsName) }}
+                                    </div>
+                                    <div class="inner-contents">
+                                        {{ placeholders.rightsName }}
+                                    </div>
+                                </div>
+
+                                <div class="license-info-row-inner">
+                                    <div class="inner-title">
+                                        {{ translate(licenseText.rightsEmail) }}
+                                    </div>
+                                    <div class="inner-contents">
+                                        {{ placeholders.rightsEmail }}
+                                    </div>
+                                </div>
+
+                                <div class="license-info-row-inner">
+                                    <div class="inner-title">
+                                        {{ translate(licenseText.rightsX) }}
+                                    </div>
+                                    <div class="inner-contents">
+                                        {{ placeholders.rightsX }}
+                                    </div>
+                                </div>
+
+                                <div class="license-info-row-inner">
+                                    <div class="inner-title">
+                                        {{ translate(licenseText.rightsWebsite) }}
+                                    </div>
+                                    <div class="inner-contents">
+                                        {{ placeholders.rightsWebsite }}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class=" license-info-block">
+                            <div class="license-info-title">{{translate(licenseText.creditNotation)}}</div>
+                            <div class="license-info-contents">{{placeholders.credit }}</div>
+                        </div>
+
+                        <div class="license-info-block">
+                            <div class="license-info-title">{{translate(licenseText.recommendedHashtags)}}</div>
+                            <div class="license-info-contents">{{ placeholders.hashtags}}</div>
+                        </div>
+
+                        <div class="license-info-block">
+                            <div class="license-info-title">{{translate(licenseText.termsChangePolicy)}}</div>
+                            <div class="license-info-contents">
+                                <p><span class="license-text">{{ translate(permissionPeriodSimpleText)}}</span></p>
+                                <p v-if="placeholders.permissionPeriodKey === 'D'"><span class="license-text">{{
+                                        placeholders.permissionPeriodCustom }}</span></p>
+                            </div>
+                        </div>
+
+                        <div class="license-info-block">
+                            <div class="license-info-title">{{translate(licenseText.termsVersion)}}</div>
+                            <div class="license-info-contents">{{ placeholders.version }}</div>
+                        </div>
+                    </div>
+
+
+                    <div class="licensefooter" v-if="!['ja', 'en'].includes(currentLanguage)">
+                        <hr>
+                        {{translate(licenseText.footer)}}
+                    </div>
                 </div>
 
-            </p>
-            <p>
-                <div class="settingtext">規約バージョン</div><input type="text" class="dtp-value" id="dtp-version">
-            </p>
-            <p style="text-align: right;margin-right:30px">
-                <span class="reqtext">*</span>は必須項目
-            </p>
-            </form>
+
+                <div class="section" v-if="['ja', 'en'].includes(currentLanguage)">
+                    <div class="terms-section">
+                        <div class="main-title-header">
+                            {{translate(licenseText.title)}}
+                        </div>
+                        <p class="main-title-description">
+                            {{translate(licenseText.description)}}
+                        </p>
+
+
+                        <h1 class="terms-title">{{translate(standardTerms.title)}}</h1>
+                        <h2 class="terms-subtitle">{{translate(standardTerms.article1.subtitle)}}</h2>
+                        <p>{{translate(standardTerms.article1.description)}}</p>
+
+                        <dl class="terms-definitions">
+
+                            <!-- 第1条 -->
+                            <div class="no-page-break" v-for="terms in standardTerms.article1.terms">
+                                <dt class="term-title">{{translate(terms.termTitle)}}</dt>
+                                <dd class="term-description">{{translate(terms.termDescription)}}</dd>
+                            </div>
+
+                        </dl>
+                        <!-- 第２条～第８条 -->
+                        <div v-for="(article, articleIndex) in standardTerms.articles" :key="articleIndex"
+                            class="no-page-break">
+                            <div class="terms-subtitle">{{ translate(article.subtitle) }}</div>
+                            <ol>
+                                <li v-for="(term, termIndex) in article.terms" :key="termIndex">
+                                    <template v-if="typeof term === 'string'">
+                                        {{ translate(term) }}
+                                    </template>
+                                    <template v-else>
+                                        <p>{{ translate(term.text) }}</p>
+                                        <template v-if="term.subTerms">
+                                            <ol type="a">
+                                                <li v-for="(subTerm, subIndex) in term.subTerms" :key="subIndex">
+                                                    <template v-if="typeof subTerm === 'string'">
+                                                        {{ translate(subTerm) }}
+                                                    </template>
+                                                    <template v-else>
+                                                        {{ translate(subTerm.text) }}
+                                                        <ol type="i">
+                                                            <li v-for="(deepSubTerm, deepSubIndex) in subTerm.subTerms"
+                                                                :key="deepSubIndex">
+                                                                {{ translate(deepSubTerm) }}
+                                                            </li>
+                                                        </ol>
+                                                    </template>
+                                                </li>
+                                            </ol>
+                                        </template>
+                                    </template>
+                                </li>
+                            </ol>
+                        </div>
+
+                        <!-- 個別条件 -->
+                        <div class="no-page-break">
+                            <h1 class="terms-title">{{translate(licenseText.termsforParticularCases)}}</h1>
+
+                            <h2 class="terms-subtitle">{{translate(licenseText.conditionsOfUse)}}</h2>
+                            <div class="" v-for="category in licenseCategories" :key="category.name"
+                                v-if="category.items.some(item => item.visibility)">
+                                <div class="particular-title">{{category.termID}} {{ translate(category.name) }}</div>
+
+                                <div v-for="item in category.items" :key="item.termID || item.type"
+                                    class="particular-term-item" v-show="item.visibility">
+                                    <!-- NESTED_CLAUSE -->
+                                    <template v-if="item.type === LicenseItemType.NESTED_CLAUSE">
+
+                                        <div class="particular-icon-and-term">
+                                            <img :src="item.icon" class="particular-icon" :alt="item.term" />
+                                            <div class="particular-term">{{ item.termID }} {{ translate(item.term) }}
+                                            </div>
+                                        </div>
+
+                                        <div class="particular-nested-wrapper">
+                                            <div class="particular-nested-inline" v-for="nested in item.nestedItems"
+                                                :key="nested.termID" v-show="nested.visibility">
+                                                <span class="particular-nested-term">{{ translate(nested.term)
+                                                    }}</span>
+                                                <span
+                                                    class="particular-nested-selectedOption particular-selectedOption">{{
+                                                    translate(nested.selectedOption)
+                                                    }}</span>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <!-- CLAUSE -->
+                                    <template v-else-if="item.type === LicenseItemType.CLAUSE">
+                                        <div class="particular-icon-and-term">
+                                            <img :src="item.icon" class="particular-icon" :alt="item.term" />
+                                            <div class="particular-term">{{ item.termID }} {{ translate(item.term) }}
+                                            </div>
+                                        </div>
+                                        <div class="particular-selectedOption">{{translate(item.selectedOption)}}</div>
+                                        <!-- <div v-if="item.userTips" class="particular-tips">
+                                            <p><strong>Tips:</strong> {{ translate(item.userTips) }}</p>
+                                        </div> -->
+                                    </template>
+
+                                    <!-- FREE_TEXT -->
+                                    <template v-else-if="item.type === LicenseItemType.FREE_TEXT">
+                                        <img :src="item.icon" class="particular-icon" :alt="item.term" />
+                                        <div class="particular-term">
+                                            <div class="particular-free-text multiline-text">{{ item.text ||
+                                                item.defaultText }}
+                                            </div>
+                                        </div>
+
+                                    </template>
+
+                                    <template v-if="item.userTips">
+                                        <div v-if="item.userTips" class="particular-tips">
+                                            <p><strong>Tips:</strong> {{ translate(item.userTips) }}</p>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ライセンス情報 -->
+                        <div class="license-info-container no-page-break">
+                            <div class="license-info-block">
+                                <div class="license-info-title">{{translate(licenseText.licensedData)}}</div>
+                                <div class="license-info-contents">{{placeholders.permittedData}}</div>
+                            </div>
+                            <div class="license-info-block">
+                                <div class="license-info-title">{{translate(licenseText.rightsHolderInfo)}}</div>
+                                <div class="license-info-contents">
+                                    <div class="license-info-row-inner">
+                                        <div class="inner-title">
+                                            {{ translate(licenseText.rightsName) }}
+                                        </div>
+                                        <div class="inner-contents">
+                                            {{ placeholders.rightsName }}
+                                        </div>
+                                    </div>
+
+                                    <div class="license-info-row-inner">
+                                        <div class="inner-title">
+                                            {{ translate(licenseText.rightsEmail) }}
+                                        </div>
+                                        <div class="inner-contents">
+                                            {{ placeholders.rightsEmail }}
+                                        </div>
+                                    </div>
+
+                                    <div class="license-info-row-inner">
+                                        <div class="inner-title">
+                                            {{ translate(licenseText.rightsX) }}
+                                        </div>
+                                        <div class="inner-contents">
+                                            {{ placeholders.rightsX }}
+                                        </div>
+                                    </div>
+
+                                    <div class="license-info-row-inner">
+                                        <div class="inner-title">
+                                            {{ translate(licenseText.rightsWebsite) }}
+                                        </div>
+                                        <div class="inner-contents">
+                                            {{ placeholders.rightsWebsite }}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="license-info-block">
+                                <div class="license-info-title">{{translate(licenseText.creditNotation)}}</div>
+                                <div class="license-info-contents">{{placeholders.credit }}</div>
+                            </div>
+
+                            <div class="license-info-block">
+                                <div class="license-info-title">{{translate(licenseText.recommendedHashtags)}}</div>
+                                <div class="license-info-contents">{{ placeholders.hashtags}}</div>
+                            </div>
+
+                            <div class="license-info-block">
+                                <div class="license-info-title">{{translate(licenseText.termsChangePolicy)}}</div>
+                                <div class="license-info-contents">
+                                    <p><span class="license-text">{{ translate(permissionPeriodText)}}</span></p>
+                                    <p v-if="placeholders.permissionPeriodKey === 'D'"><span class="license-text">{{
+                                            placeholders.permissionPeriodCustom }}</span></p>
+                                </div>
+                            </div>
+
+                            <div class="license-info-block">
+                                <div class="license-info-title">{{translate(licenseText.termsVersion)}}</div>
+                                <div class="license-info-contents">{{ placeholders.version }}</div>
+                            </div>
+                        </div>
+                        <div class="licensefooter">
+                            <hr>
+                            {{translate(licenseText.footer)}}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
-        <textarea id="termstextarea" cols="120" rows="15" wrap="off" readonly></textarea>
-        <p style="text-align: center">
-            <button class="btn btn--green btn--cubic" id="textdownload">テキストをダウンロード</button>
-        </p>
     </div>
-    <div id="termsimagepanel" class="">
-        <p>
-            <canvas id="downloadcanvas" width="600px" height="400px">
-            </canvas>
-        </p>
-        <p style="text-align: center">
-            <button class="btn btn--green btn--cubic" id="imagedownload">画像をダウンロード</button>
-        </p>
-    </div>
-    <div id="footer">
-        <span>VN3License Easy Generator created by <a href="https://twitter.com/lowteq_vr">@lowteq_vr</a></span>
-        <span><a href="privacy.html">Privacy Policy & Site Policy</a></span>
-    </div>
-
-<script type="text/javascript">
-    
-
-        var termTemplate = '<p class="term">\
-            <div class="lcs_wrap"><input type="checkbox" name="check-1" value="{term_index}" class="lcs_check" autocomplete="off">\
-                <div class="lcs_switch lcs_checkbox_switch lcs_off">\
-                    <div class="lcs_cursor"></div>\
-                    <div class="lcs_label lcs_label_on">{term_on}</div>\
-                    <div class="lcs_label lcs_label_off">{term_off}</div>\
-                </div>\
-            </div>\
-                <div class="term-image"><img src="{term_imageurl}"></div>\
-                <div class="term-text">{term_text}</div>\
-        </p>';
-
-
-
-        const license_version = "0.10";
-        const generator_version = "1.0.0";
-
-        var licenseTemplate = "";
-
-
-    //termDataListの初期化（ON OFFの情報を持つ）
-    var termDataList = {};
-    for (var i=0;i<terms.length;i++){
-        termDataList[terms[i][0]] = false;
-    }
-
-    //アイコンは事前にロードしておく。drawImageの直前でロードだと描画されないことがある
-    var icons = {};
-    for (var i=0;i<terms.length;i++){
-        var uid = terms[i][0];
-        icons[uid] = new Image();
-        var iconname = terms[i][4]; 
-        icons[uid].src = "icons/" + iconname;
-    }
-    var logo = new Image();
-
-    function termObj(indexchar){
-        for (var i=0;i<temrs.length;i++){
-            if(terms[i][0] == indexchar){
-                return terms[i];
-            }
-        }
-        return null;
-    }
-
-    function generateImage(){
-
-        console.log("generateImage");
-
-        var imagewidth = parseInt($("#imagewidth").text());
-        var col = parseInt($("#columnnum").text());
-        var row = 1;
-        const margin = 18;
-        const logoheight = 96;
-        const logowidth = 240;
-        const versionheight = 15;
-
-
-        var onNum = 0;
-        Object.keys(termDataList).forEach(function(key){
-            if(termDataList[key])onNum++;
-        });
-        if (onNum == 0){
-            row = 1;
-        }else{
-            row = Math.floor((onNum - 1)/ col)+1;
-        }
-        console.log("onNum="+ onNum + " " + col + " " + row);
-        var canvas = document.getElementById('downloadcanvas');
-
-        var iconsize = (imagewidth - 2*margin)/col;
-        var iconheader = iconsize / 4;
-        var imageheight = logoheight + (iconsize + iconheader) * row + margin + margin;
-        
-        canvas.width = imagewidth;
-        canvas.height = imageheight;
-
-        var ctx = canvas.getContext('2d');
-
-        //background描画
-        ctx.fillStyle = "rgb(0,0,0)";
-        ctx.fillRect(0, 0, imagewidth,imageheight);
-
-        //logo描画
-        ctx.drawImage(logo,0,0);
-
-        //icon iconindexchar 描画
-        ctx.fillStyle = "rgb(255,255,255)";
-
-        var pasteX = margin;
-        var pasteY = logoheight + iconheader + margin;
-        ctx.font = iconheader + "px Arial";
-        Object.keys(termDataList).forEach(function(key){
-            if(termDataList[key]){
-                ctx.drawImage(icons[key], pasteX, pasteY,iconsize,iconsize);
-                ctx.fillText(key,pasteX+0.5*iconsize-0.5*iconheader,pasteY-2);
-                pasteX += iconsize;
-                if(pasteX > imagewidth-iconsize){
-                    pasteX = margin;
-                    pasteY += iconsize+iconheader;
-                }
-            }
-        });
-
-        //version描画
-        ctx.font = versionheight + "px Arial";
-        ctx.fillText("VN3License version:" + license_version, logowidth+margin,versionheight);
-    }
-    function generateText(){
-        var licenseText = licenseTemplate;
-
-        var title = $("#dtp-title").val();
-        var author_name = $("#dtp-author_name").val();
-        var data_name = $("#dtp-data_name").val();
-        var genterms = generateTerms();
-        var special_notes = $("#dtp-special_notes").val();
-        var author_info = "権利者:" + author_name + "\n" + "問い合わせ先:" + $("#dtp-author_reference").val() + "\n" + "ウェブサイト:" + $("#dtp-author_website").val();
-        var credit = $("#dtp-credit").val();
-        var hashtag = $("#dtp-hashtag").val();
-        var duration = $("#durationtextarea").text();
-        var version = $("#dtp-version").val();
-
-
-
-        licenseText = replaceAll(licenseText,"{title}",title);
-        licenseText = replaceAll(licenseText,"{author_name}",author_name);
-        licenseText = replaceAll(licenseText,"{data_name}",data_name);
-        licenseText = replaceAll(licenseText,"{terms}",genterms);
-        licenseText = replaceAll(licenseText,"{special_notes}",special_notes);
-        licenseText = replaceAll(licenseText,"{author_info}",author_info);
-        licenseText = replaceAll(licenseText,"{credit}",credit);
-        licenseText = replaceAll(licenseText,"{hashtag}",hashtag);
-        licenseText = replaceAll(licenseText,"{duration}",duration);
-        licenseText = replaceAll(licenseText,"{version}",version);
-
-        $("#termstextarea").val(licenseText);
-
-    }
-
-    function generateTerms() {
-        
-        var textterms = "";
-
-        for(var i = 0; i < terms.length; i++) {
-            
-            var indexChar = terms[i][0];
-            var termtext = terms[i][1];
-            var selected = termDataList[indexChar]? terms[i][2] : terms[i][3];
-
-            var addterm = "    " + indexChar + "." + termtext + " \n        " + selected + "\n";
-            textterms += addterm;
-
-        }
-
-        return textterms;
-    }
-
-    function sendData(){
-
-
-        var dataobj = objectDeepCopy(termDataList);
-
-        var jsondata = JSON.stringify(dataobj);
-
-        $.post({
-            url:"https://script.google.com/macros/s/AKfycbytXzsdOSSUOQhSm6dDmtXxsAh4JQK_uGm7Rprp25GdI3uGsR88/exec",
-            crossDomain: true,
-            data:jsondata,
-            dataType:"text",
-        });
-
-    };
-
-    $(document).ready(function (e) {
-        $('input.lcs_check').lc_switch();
-        
-        $("#durationtextarea").text($("option:selected", this).text());
-        $("#vn3licenseversion").text(" v" + license_version + " ");
-
-        $.get("https://lowteq.github.io/vn3-easy-generator/licensetemplate.txt",function(data){
-            licenseTemplate = data;
-            generateText();
-        });
-
-        //ONOFF条項テキストのDOMを作成してHTMLに追加する
-
-        let termsection = 
-            [["#termsection-user",[0,1]],
-             ["#termsection-upload",[2,3,4]],
-             ["#termsection-sensitive",[5,6,7]],
-             ["#termsection-processing",[8,9,10,11]],
-             ["#termsection-distribution",[12,13]],
-             ["#termsection-productuse",[14,15,16,17]],
-             ["#termsection-secondarycreation",[18,19,20]],
-             ["#termsection-other",[21,22,23]]
-            ];
-
-        termsection.forEach(function(item){
-            let sectionid = item[0];
-            let sectionindexlist = item[1];
-            sectionindexlist.forEach(function(i){
-
-                var termHTML = termTemplate;
-
-                var termIndex = terms[i][0];
-                var termText = termIndex + ". " + terms[i][1];
-                var termOnText = terms[i][2];
-                var termOffText = terms[i][3];
-                var termImageURL = "icons/" + terms[i][4];
-
-                termHTML = termHTML.replace("{term_index}", termIndex);
-                termHTML = termHTML.replace("{term_text}", termText);
-                termHTML = termHTML.replace("{term_on}", termOnText);
-                termHTML = termHTML.replace("{term_off}", termOffText);
-                termHTML = termHTML.replace("{term_imageurl}", termImageURL);
-
-                $(sectionid).append(termHTML);
-
-            });
-        });
-
-        logo.src = "logo.png";
-        logo.onload = function(){
-            generateImage();
-        }
-        // triggered each time a field changes status
-        $(document).on('lcs-statuschange', '.lcs_check', function () {
-
-            //termのONOFFの更新をtermDataListに反映する
-            termDataList[$(this).val()] = $(this).is(":checked");
-
-            generateImage();
-            generateText();
-        });
-
-        //入力項目リアルタイムでライセンステキストを更新
-        $(".dtp-value").keyup(function(){
-            generateText();
-        });
-
-        //image settings 画像幅
-        $("#imagewidthslider").on("input",function(){
-            $("#imagewidth").text($(this).val());
-            generateImage();
-        });
-        //image settings カラム数
-        $("#columnslider").on("input",function(){
-            $("#columnnum").text($(this).val());
-            generateImage();
-        });
-        //image settings ピンどめ
-        $("#setting-pin").change(function(){
-            var checked = $(this).is(":checked");
-            if(checked){
-                $("#termsimagepanel").css("position", "sticky");
-            }else{
-                $("#termsimagepanel").css("position","relative");
-            }
-        });
-        $("#setting").hide();
-        $("#settingbutton").on("click",function(){
-            console.log("click");
-            $("#setting").toggle();
-        });
-        $(document).on("click",function(e){
-            if (!$(e.target).closest('#menu').length) {
-                $('#setting').hide();
-            }
-        });
-        $("#imagedownload").on("click",function(){
-            console.log("image download");
-            sendData();
-            var canvas = document.getElementById("downloadcanvas");
-            var link = document.createElement("a");
-
-            var filename = "license_image.png";
-
-            if (canvas.msToBlob) {
-                var blob = canvas.msToBlob();
-                window.navigator.msSaveBlob(blob, filename);
-            }else{
-                link.href = canvas.toDataURL("image/png");
-                link.download = filename;
-                link.click();
-            }
-
-        });
-        $("#textdownload").on("click",function(){
-            console.log("text download");
-            
-            if(!$("#textform").get(0).reportValidity()) return;
-
-
-            var licenseText = $("#termstextarea").val();
-            var blob = new Blob([licenseText]);
-            var link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "license.txt";
-            link.click();
-
-        });
-
-        $("#dtp-duration").change(function(){
-            $("#durationtextarea").text($("option:selected",this).text());
-            generateText();
-
-        });
-
-
-    });
-
-
-</script>
-
 </body>
 
 </html>

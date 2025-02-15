@@ -1,0 +1,253 @@
+/* *{
+    outline:solid red 2px;
+} */
+a{
+    color: rgb(60,60,60);
+    border-bottom: 1px solid;   
+}
+a:hover{
+    color: rgb(100,100,100);
+    border-bottom: none;
+}
+.content{
+    margin: 20px auto;
+    width:900px;
+}
+#header {
+    padding : 20px;
+    margin:  20px auto;
+    width:900px;
+    /* outline:solid 1px; */
+    border-radius: 3px;
+    box-shadow: 0 0px 20px rgba(0,0,0,0.2);
+}
+#mainmenu{
+    position: relative;
+    height:43px;
+}
+#mainmenu>div{
+    display: inline-block;
+    font-weight: bold;
+    font-size:0.9em;
+    outline:solid 1px;;
+    padding:10px;
+
+}
+
+#overview{
+    padding : 20px;
+    margin: 20px auto;
+    width:900px;
+    outline:solid 1px;
+    font-size:90%;
+
+}
+#maincontents{
+    padding : 20px;
+    margin: 20px auto;
+    width:900px;
+    outline:solid 1px;
+}
+#downloadtextpanel{
+    width:900px;
+    margin: 20px auto;
+    position: relative;
+    text-align:center;
+}
+#termstextarea{
+    text-align: left;
+    /* margin-left: 20px; */
+}
+.term-text{
+    display: inline-block;
+    width:650px;
+    margin-left : 10px;
+    font-weight: bold;
+}
+.term-image{
+    display: inline-block;
+    vertical-align: top;
+}
+.term-image>img{
+
+    width:28px;
+    height:28px;
+}
+.term-image>img:hover{
+
+    transform: scale(2.3,2.3) translateX(7px);;
+}
+#termsimagepanel{
+    padding : 0px 10px 5px;
+    z-index: 1000;
+    background-color:white;
+    outline:solid 2px;
+    position: sticky;
+    bottom: 0px;
+    width:100%;
+    margin: 0 auto;
+}
+#termsimagepanel{
+
+    width:100%;
+    display:block;
+}
+
+
+#setting{
+    padding : 20px;
+    width:400px;
+    outline:solid 1px;
+    background-color: rgba(255,255,255,0.9);
+    z-index: 1100;
+    position: fixed;
+    right:30px;
+    top:80px;
+    float: left bottom;;
+}
+#downloadcanvas{
+    margin: auto;
+    padding : 10px;
+    display: block;
+    
+}
+
+.settingtext{
+    width:180px;
+    text-align:right;
+    display:inline-block;
+    margin-right: 10px;
+}
+#menu{
+    width:400px;
+    position:fixed;
+    right:30px;
+    top:10px;
+    z-index:1100;
+}
+#settingbutton{
+    text-align: right;
+    cursor: pointer;
+}
+.btn--green {
+    margin: auto;
+    display:block;
+    width:230px;
+    color: #000;
+    background-color: #36f53f;
+    border-bottom: 5px solid #12a10d;
+}
+
+.btn--green:hover {
+
+    color: #000;
+    background: #86ff56;
+    border-bottom: 5px solid #0aa116;
+}
+.btn--green:disabled{
+    
+    color: #000;
+    background: #868696;
+    border-bottom: 5px solid #525c4f;
+}
+
+#textsettingpanel{
+    padding : 20px;
+    margin: 20px auto;
+    width:700px;
+    outline:solid 1px;
+
+}
+.dtp-value{
+    vertical-align:top;
+    width:400px;
+    display: inline-block;
+}
+#durationtextarea{
+    text-align:left;
+    font-size: 0.8em;
+}
+#footer{
+    padding : 0px 20px 5px;
+    z-index: 999;
+    background-color:white;
+    outline:solid 2px;
+    bottom: 0px;
+    width:100%; 
+    font-size:0.8em;
+    color: rgb(100,100,100);
+    text-align: center;
+    background-color: rgb(200,200,200); 
+    margin-left: 0;
+    margin-right: 0;
+}
+#footer>span{
+    padding: 0px 5px 0px;
+}
+.reqtext{
+    color:red;
+    vertical-align:super;
+}
+#header a{
+  text-decoration: none;
+  cursor: pointer;
+}
+h2{
+    font-size:20px;
+    font-weight: bold;
+}
+h3{
+    font-size:16px;
+    font-weight: bold;
+}
+
+.menu-left{
+    float: left;
+}
+.menu-right{
+    float:right;
+}
+.termsection-header{
+    padding-top:20px;
+    font-size:1.2em;
+    font-weight: bold;
+    color: #404040;
+}
+
+.chkbox {
+	margin:			0 0 10px 20px;
+}
+/* ラベルのスタイル　*/
+.chkbox label {
+	padding-left:		38px;			/* ラベルの位置 */
+	font-size:		18px;
+    line-height:	32px;
+    font-weight: bold;
+	display:		inline-block;
+	cursor:			pointer;
+	position:		relative;
+}
+
+/* ボックスのスタイル */
+.chkbox label:before {
+	content:		'';
+	width:			32px;			/* ボックスの横幅 */
+	height:			32px;			/* ボックスの縦幅 */
+	display:		inline-block;
+	position:		absolute;
+	left:			0;
+	background-color:	#fff;
+	box-shadow:		inset 1px 2px 3px 0px #000;
+	border-radius:		6px 6px 6px 6px;
+}
+/* 元のチェックボックスを表示しない */
+.chkbox input[type=checkbox] {
+	display:		none;
+}
+/* チェックした時のスタイル */
+.chkbox input[type=checkbox]:checked + label:before {
+	content:		'\2713';		/* チェックの文字 */ 
+	font-size:		34px;			/* チェックのサイズ */
+	color:			#fff;			/* チェックの色 */
+	background-color:	#06f;			/* チェックした時の色 */
+}

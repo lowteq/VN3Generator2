@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>翻訳テストページ</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js" defer></script>
+  <script src="translations.js" defer></script>
+</head>
+
+<body>
+  <div id="app">
+    <h1>翻訳テスト</h1>
+
+    <!-- 動的に翻訳 -->
+    <p>{{ translate("（参考資料）[[termsTitle]]利用規約による許諾範囲の簡易一覧") }}</p>
+    <p>{{ translate(animal1) }}</p>
+    <p>{{ translate("犬") }}</p>
+
+    <!-- 言語選択 -->
+    <label for="language"><strong>言語を選択:</strong></label>
+    <select id="language" v-model="currentLanguage">
+      <option value="ja">日本語</option>
+      <option value="en">English</option>
+      <option value="ko">한국어</option>
+      <option value="zh_tw">繁體中文</option>
+      <option value="zh_cn">简体中文</option>
+    </select>
+
+    <!-- プレースホルダー値を動的に変更 -->
+    <label for="termsTitle"><strong>利用規約のタイトル:</strong></label>
+    <input id="termsTitle" v-model="termsTitle" placeholder="タイトルを入力">
+  </div>
+
+  <script defer>
+    document.addEventListener("DOMContentLoaded", function () {
+      new Vue({
+        el: "#app",
+        data: {
+          currentLanguage: "ja", // デフォルト言語
+          termsTitle: "Example Title", // プレースホルダーの値
+          animal1: "しか",
+        },
+        methods: {
+          translate(key) {
+            let translation;
+
+            // 日本語の場合はキーをそのまま利用
+            if (this.currentLanguage === "ja") {
+              translation = key;
+            } else {
+              // 他言語の場合は翻訳を取得
+              translation = translations[key]?.[this.currentLanguage] || "Translation not found";
+            }
+
+            // 翻訳後に [[ ]] プレースホルダーを置き換え
+            return translation.replace(/\[\[\s*(\w+)\s*\]\]/g, (match, placeholder) => {
+              return this[placeholder] !== undefined ? this[placeholder] : match;
+            });
+          }
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

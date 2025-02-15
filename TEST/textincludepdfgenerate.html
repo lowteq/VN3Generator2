@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accurate HTML to PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+        }
+
+        .section {
+            width: 210mm;
+            /* A4の幅 */
+            height: 297mm;
+            /* A4の高さ */
+            padding: 20px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            margin: 20px auto;
+            background: #fff;
+        }
+
+        .highlight {
+            color: red;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .normal {
+            color: blue;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="section">
+        <h1>Section to be converted</h1>
+        <p>This is an example of a <span class="highlight">highlighted text</span> in a paragraph.</p>
+        <p>Here is another line with <span class="normal">normal styled text</span>.</p>
+    </div>
+
+    <!-- 必要なライブラリ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        async function generatePDFWithText() {
+            const { jsPDF } = window.jspdf;
+
+            const section = document.querySelector('.section');
+
+            // すべてのテキストノードを取得（CSSの影響を考慮）
+            function getAllTextNodesWithCSS(element) {
+                const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
+                const textNodes = [];
+                while (walker.nextNode()) {
+                    const node = walker.currentNode;
+                    if (node.nodeValue.trim() !== '') {
+                        const parent = node.parentElement;
+                        const rect = parent.getBoundingClientRect();
+                        const style = window.getComputedStyle(parent);
+                        const lineHeight = parseFloat(style.lineHeight) || parseFloat(style.fontSize);
+
+                        // CSSレイアウト込みの座標を計算
+                        textNodes.push({
+                            text: node.nodeValue.trim(),
+                            x: rect.left + parseFloat(style.paddingLeft) + window.scrollX,
+                            y: rect.top + parseFloat(style.paddingTop) + lineHeight + window.scrollY,
+                            fontSize: parseFloat(style.fontSize),
+                            color: style.color
+                        });
+                    }
+                }
+                return textNodes;
+            }
+
+            const textData = getAllTextNodesWithCSS(section);
+
+            // html2canvasで指定部分を画像化
+            const canvas = await html2canvas(section, { scale: 2 });
+            const imgData = canvas.toDataURL('image/png');
+
+            // jsPDFインスタンスの生成 (A4サイズ)
+            const pdf = new jsPDF({ format: 'a4', unit: 'mm' });
+
+            const pageWidth = 210;
+            const pageHeight = 297;
+            const canvasWidth = canvas.width;
+            const canvasHeight = canvas.height;
+
+            const scaleX = pageWidth / canvasWidth;
+            const scaleY = pageHeight / canvasHeight;
+
+            // 画像をPDFページに追加
+            pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
+
+            // 文字列データを基にPDFにテキストを描画
+            textData.forEach((data) => {
+                const adjustedX = data.x * scaleX;
+                const adjustedY = data.y * scaleY;
+                pdf.setFontSize(data.fontSize * scaleX);
+                pdf.setTextColor(data.color);
+                pdf.text(data.text, adjustedX, adjustedY);
+            });
+
+            pdf.save('example.pdf');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const button = document.createElement('button');
+            button.textContent = 'Generate PDF';
+            button.style.margin = '20px';
+            button.onclick = generatePDFWithText;
+            document.body.appendChild(button);
+        });
+    </script>
+</body>
+
+</html>

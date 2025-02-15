@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue.js License Categories</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .section {
+            width: 210mm;
+            height: 297mm;
+            border: 1px solid #ddd;
+            margin: 0 auto;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .inditermsection {
+            column-count: 2;
+            column-gap: 3px;
+        }
+
+        .grid-item {
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            break-inside: avoid;
+            margin-bottom: 3px;
+        }
+
+        .items-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1px;
+        }
+
+        .term-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            margin-bottom: 3px;
+            background: #ffffff;
+            padding: 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 110px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .icon-and-term {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            width: 100%;
+        }
+
+        .icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .term {
+            color: #000000;
+            text-align: left;
+            flex: 1;
+        }
+
+        .nested-items {
+            margin-top: 4px;
+            color: #555;
+            font-size: 7px;
+        }
+
+        .selectedOption {
+            color: #5837fc;
+            text-align: center;
+            font-size: 9px;
+        }
+
+        .wideitem {
+            width: 170px;
+        }
+
+        @media print {
+            @page {
+                size: A4 portrait;
+                /* A4サイズ, 縦向き */
+                margin: 1cm;
+                /* マージン */
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="data.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas/dist/html2canvas.min.js"></script>
+</head>
+
+<body>
+    <!-- PDFダウンロードボタンをページ下部に配置 -->
+    <button id="download-pdf" class="no-print">PDFをダウンロード</button>
+    <div id="app">
+
+        <div class="section inditermsection">
+            <div class="grid-item" v-for="category in licenseCategories" :key="category.name">
+                <div class="title">{{ category.name }}</div>
+                <div class="items-container">
+                    <div v-for="item in category.items" :key="item.termID || item.type"
+                        :class="['term-item', { wideitem: /A|E|F|G/.test(item.termID) }]"
+                        v-if="item.type !== LicenseItemType.TIPS">
+                        <!-- NESTED_CLAUSE -->
+                        <template v-if="item.type === LicenseItemType.NESTED_CLAUSE">
+                            <div class="icon-and-term">
+                                <img :src="item.icon" class="icon" :alt="item.simpleTerm" />
+                                <div class="term">{{ item.termID }} {{ item.simpleTerm }}</div>
+                            </div>
+                            <div class="nested-items" v-for="nested in item.nestedItems" :key="nested.termID">
+                                - {{ nested.simpleTerm }}
+                                <div class="selectedOption">{{nested.options[1]}}</div>
+                            </div>
+                        </template>
+
+                        <!-- CLAUSE -->
+                        <template v-else-if="item.type === LicenseItemType.CLAUSE">
+                            <div class="icon-and-term">
+                                <img :src="item.icon" class="icon" :alt="item.simpleTerm" />
+                                <div class="term">{{ item.termID }} {{ item.simpleTerm }}</div>
+                            </div>
+                            <div class="selectedOption">{{item.options[1]}}</div>
+                    </div>
+                    </template>
+
+                    <!-- FREE_TEXT -->
+                    <template v-else-if="item.type === LicenseItemType.FREE_TEXT">
+                        <div class="free-text">{{ item.text }}</div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            new Vue({
+                el: "#app",
+                data: {
+                    licenseCategories: licenseCategories,
+                },
+            });
+        });
+        document.getElementById('download-pdf').addEventListener('click', () => {
+            window.print();
+        });
+
+
+    </script>
+</body>
+
+</html>
