@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>動的改ページとアイテム追加（PDFサイズ小さく）</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas/dist/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="styles-pdf.css">
+
+</head>
+
+<body>
+    <div id="app">
+        <!-- アイテム追加ボタンをページ上部に配置 -->
+        <button class="add-item-button" @click="addItem('small')">小さいアイテムを追加</button>
+        <button class="add-item-button" @click="addItem('medium')">中くらいのアイテムを追加</button>
+        <button class="add-item-button" @click="addItem('large')">大きいアイテムを追加</button>
+        <div class="section" style="height: 1800px;">
+            <div class="no-break">
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+            </div>
+            <div class="no-break">
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+            </div>
+            <div class="no-break">
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+            </div>
+            <div class="no-break">
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+            </div>
+            <div class="no-break">
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+            </div>
+            <div class="no-break">
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+            </div>
+            <div class="no-break">
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+            </div>
+            <div class="no-break">
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+            </div>
+            <div class="no-break">
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+            </div>
+            <div class="no-break">
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+            </div>
+            <div class="no-break">
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+            </div>
+            <div class="no-break">
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+            </div>
+            <div class="no-break">
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+            </div>
+            <div class="no-break">
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+            </div>
+            <div class="no-break">
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+                <p>ねこ</p>
+            </div>
+        </div>
+        <!-- 各セクションのサイズをA4のアスペクト比に固定 -->
+        <div v-for="(group, index) in groupedData" :key="index" class="section">
+            <h2>セクション {{ index + 1 }}</h2>
+            <div v-for="item in group" :key="item.id" class="item" :style="{ height: item.height + 'px' }">
+                {{ item.content }}
+            </div>
+        </div>
+
+        <!-- PDFダウンロードボタンをページ下部に配置 -->
+        <button id="download-pdf">PDFをダウンロード</button>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                groupedData: [[]], // グループ化されたデータ（セクションに分けられたアイテム）
+                itemCount: 0 // 追加されるアイテムのカウント
+            },
+            methods: {
+                addItem(size) {
+                    this.$nextTick(() => {
+                        // 新しいアイテムを追加
+                        let newItem = {};
+                        this.itemCount += 1;
+
+                        if (size === 'small') {
+                            newItem = {
+                                id: this.itemCount,
+                                content: `小さいアイテム ${this.itemCount}`,
+                                height: 20 // 小さいアイテムの高さ（px）
+                            };
+                        } else if (size === 'medium') {
+                            newItem = {
+                                id: this.itemCount,
+                                content: `中くらいのアイテム ${this.itemCount}`,
+                                height: 50 // 中くらいのアイテムの高さ（px）
+                            };
+                        } else if (size === 'large') {
+                            newItem = {
+                                id: this.itemCount,
+                                content: `大きいアイテム ${this.itemCount}`,
+                                height: 100 // 大きいアイテムの高さ（px）
+                            };
+                        }
+
+                        // 現在のセクションを取得
+                        const currentSectionIndex = this.groupedData.length - 1;
+                        const currentSection = this.groupedData[currentSectionIndex];
+
+                        // 仮にアイテムを追加して高さをチェック
+                        currentSection.push(newItem);
+                        this.$nextTick(() => {
+                            const sectionElements = document.querySelectorAll('.section');
+                            const currentSectionElement = sectionElements[currentSectionIndex];
+
+                            if (currentSectionElement.scrollHeight > currentSectionElement.clientHeight) {
+                                // セクションが溢れた場合、新しいセクションを作成してアイテムを移動
+                                currentSection.pop(); // 溢れたアイテムを取り除く
+                                this.groupedData.push([newItem]);
+                            }
+                        });
+                    });
+                }
+            }
+        });
+
+        // // PDFダウンロード処理
+        // document.getElementById('download-pdf').addEventListener('click', async () => {
+        //     const { jsPDF } = window.jspdf;
+        //     const pdf = new jsPDF({
+        //         orientation: 'portrait',
+        //         unit: 'mm',
+        //         format: 'a4',
+        //     });
+
+        //     const pdfWidth = pdf.internal.pageSize.getWidth();
+        //     const pdfHeight = pdf.internal.pageSize.getHeight();
+
+        //     // Vueがレンダリングしたセクション要素を取得
+        //     const sections = document.querySelectorAll('.section');
+
+        //     for (let i = 0; i < sections.length; i++) {
+        //         const canvas = await html2canvas(sections[i], { scale: 1 }); // 解像度を下げる
+        //         const imgData = canvas.toDataURL('image/jpeg', 0.75); // JPEGフォーマットで圧縮率を設定
+
+        //         const imgWidth = pdfWidth;
+        //         const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+        //         if (i > 0) {
+        //             pdf.addPage();
+        //         }
+
+        //         pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+        //     }
+
+        //     pdf.save('a4-section-pdf.pdf');
+        // });
+
+        document.getElementById('download-pdf').addEventListener('click', () => {
+            // .sectionクラスの要素を取得
+            const sections = document.querySelectorAll('.section');
+
+            // 印刷用のHTMLを準備
+            let printContent = '';
+            sections.forEach(section => {
+                printContent += section.outerHTML; // .section要素をHTML文字列として取得
+            });
+
+            // 一時的な印刷用ウィンドウを作成
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write('<!DOCTYPE html>');
+            printWindow.document.write('<html><head><link rel="stylesheet" href="styles-pdf.css"><title>印刷</title>');
+            printWindow.document.write('<style>@media print { .section { page-break-after: always; } }</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(printContent);
+            printWindow.document.write('</bo' + 'dy></ht' + 'ml>');
+            printWindow.document.close();
+            // ページの完全な読み込みを待つ
+            printWindow.onload = () => {
+                printWindow.focus();
+
+                // 印刷ダイアログを開く
+                printWindow.print();
+
+                // 印刷後にウィンドウを閉じる
+                printWindow.close();
+            };
+        });
+    </script>
+</body>
+
+</html>
